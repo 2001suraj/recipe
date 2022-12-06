@@ -1,4 +1,8 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
+import 'package:recipe_app/presentations/screens/add_screen.dart';
+import 'package:recipe_app/presentations/screens/main_screen.dart';
 
 class CreateRecipePage extends StatelessWidget {
   static const String routeName = 'create recipe page';
@@ -10,7 +14,9 @@ class CreateRecipePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black26,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, MainScreen.routeName);
+          },
           icon: Icon(Icons.arrow_back_ios_new_outlined),
         ),
         centerTitle: true,
