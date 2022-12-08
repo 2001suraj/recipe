@@ -16,4 +16,6 @@ class LocalStorage {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.remove('name');
   }
+ 
+  
 }

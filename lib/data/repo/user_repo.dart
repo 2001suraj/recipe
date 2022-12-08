@@ -15,11 +15,11 @@ class UserRepo {
   }
 
   Future logout() async {
-    return await auth.signOut();
+    await auth.signOut();
   }
 
   Future forgetpassword({required String email}) async {
-     await auth.sendPasswordResetEmail(email: email);
+    await auth.sendPasswordResetEmail(email: email);
   }
 
   Future<bool> isSignin() async {

@@ -7,6 +7,7 @@ import 'package:recipe_app/presentations/screens/login_screen.dart';
 import 'package:recipe_app/presentations/widgets/cus_title.dart';
 import 'package:recipe_app/presentations/widgets/custom_btn.dart';
 import 'package:recipe_app/presentations/widgets/normal_text_field.dart';
+import 'package:recipe_app/presentations/widgets/show__snackbar.dart';
 
 class ForgetpasswordScreen extends StatelessWidget {
   static const String routeName = 'forget password screen';
@@ -89,7 +90,11 @@ class ForgetpasswordScreen extends StatelessWidget {
               tap: () {
                 context
                     .read<ForgetpasswordBloc>()
-                    .add(ForgetAddEvent(email: email.text));
+                    .add(ForgetAddEvent(email: email.text.trim()));
+                showsnackBar(
+                    context: context,
+                    text: 'Password reset line is sent to your email',
+                    color: Colors.green);
               },
               text: 'Send Email',
               color: Colors.white70,

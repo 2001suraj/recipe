@@ -1,15 +1,90 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:recipe_app/presentations/pages/discover_page.dart';
+import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
+import 'package:recipe_app/presentations/screens/login_screen.dart';
+import 'package:recipe_app/presentations/screens/profile_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static const String routeName = 'HomeScreen';
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('HomeScreen')),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        bottom: PreferredSize(
+            preferredSize: Size.fromHeight(10),
+            child: Row(
+              children: [
+                Expanded(
+                    flex: 5,
+                    child: Row(
+                      children: [
+                        Spacer(),
+                        Text(
+                          'Activity',
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushReplacementNamed(
+                                context, DiscoverPage.routeName);
+                          },
+                          child: Text(
+                            'Discover',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Spacer(),
+                      ],
+                    )),
+                Expanded(
+                  flex: 1,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.people,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(
+                            context, ProfileScreen.routeName);
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 20,
+                        child: Icon(
+                          Icons.person,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )),
+      ),
       body: SingleChildScrollView(
         child: Container(
           child: Column(
@@ -93,44 +168,49 @@ class SingleActivityContainer extends StatelessWidget {
             height: 10,
           ),
           //image
-          Stack(
-            children: [
-              Container(
-                height: 280,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/1.jpg'),
-                      fit: BoxFit.cover),
-                ),
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  height: 60,
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, IndividualPage.routeName);
+            },
+            child: Stack(
+              children: [
+                Container(
+                  height: 280,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.7),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/1.jpg'),
+                        fit: BoxFit.cover),
                   ),
-                  child: Center(
-                    child: Text(
-                      'Chinese Chicken  and Broccoli ',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline5,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    height: 60,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Chinese Chicken  and Broccoli ',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headline5,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           SizedBox(
             height: 20,

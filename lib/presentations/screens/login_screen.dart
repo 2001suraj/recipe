@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:recipe_app/data/local/local_storage.dart';
 import 'package:recipe_app/presentations/screens/forget_password.dart';
 import 'package:recipe_app/presentations/screens/main_screen.dart';
 import 'package:recipe_app/presentations/screens/sigin_screen.dart';
@@ -91,6 +92,8 @@ class LoginScreen extends StatelessWidget {
               tap: () {
                 context.read<LoginBloc>().add(
                     LoginAddEvent(email: email.text, password: password.text));
+                    LocalStorage().writedata(name: email.text);
+
               },
               text: 'Log In',
             ),

@@ -105,7 +105,7 @@ class SignInScreen extends StatelessWidget {
                         password.text.isNotEmpty) {
                       context.read<LoginBloc>().add(SignUpAddEvent(
                           email: email.text, password: password.text));
-                      LocalStorage().writedata(name: name.text);
+                      LocalStorage().writedata(name: email.text);
                       CloudStorages()
                           .userinfo(name: name.text, email: email.text);
                     } else {

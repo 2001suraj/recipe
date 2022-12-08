@@ -16,7 +16,7 @@ class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
       if (event is logoutAddEvent) {
         try {
           var user = await repo.logout();
-          emit(Logoutsuccess(user: user!));
+          emit(Logoutsuccess(user: user));
         } catch (e) {
           emit(Logoutfailure(message: e.toString()));
         }

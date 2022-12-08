@@ -1,6 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:recipe_app/presentations/pages/create_recipe_page.dart';
+import 'package:recipe_app/presentations/pages/discover_page.dart';
+import 'package:recipe_app/presentations/pages/edit_profile_page.dart';
+import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
 import 'package:recipe_app/presentations/screens/add_screen.dart';
 import 'package:recipe_app/presentations/screens/auth_screen.dart';
 import 'package:recipe_app/presentations/screens/fav_screen.dart';
@@ -40,6 +42,12 @@ class AppRoute {
         return MaterialPageRoute(builder: (context) => ProfileScreen());
       case CreateRecipePage.routeName:
         return MaterialPageRoute(builder: (context) => CreateRecipePage());
+      case DiscoverPage.routeName:
+        return MaterialPageRoute(builder: (context) => DiscoverPage());
+      case IndividualPage.routeName:
+        return MaterialPageRoute(builder: (context) => IndividualPage());
+      case EditProfilePage.routeName:
+        return MaterialPageRoute(builder: (context) => EditProfilePage(ss: routeSettings.arguments as String,),);
       default:
         return MaterialPageRoute(
             builder: (context) => Scaffold(
