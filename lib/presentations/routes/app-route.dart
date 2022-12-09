@@ -17,6 +17,7 @@ import 'package:recipe_app/presentations/screens/sigin_screen.dart';
 
 class AppRoute {
   Route? ongenerateRoute(RouteSettings routeSettings) {
+    final EditProfilePage? arg = routeSettings.arguments as EditProfilePage?;
     switch (routeSettings.name) {
       case MainScreen.routeName:
         return MaterialPageRoute(builder: (context) => MainScreen());
@@ -47,7 +48,14 @@ class AppRoute {
       case IndividualPage.routeName:
         return MaterialPageRoute(builder: (context) => IndividualPage());
       case EditProfilePage.routeName:
-        return MaterialPageRoute(builder: (context) => EditProfilePage(ss: routeSettings.arguments as String,),);
+        return MaterialPageRoute(builder: (context) {
+          EditProfilePage argument;
+          return EditProfilePage(
+            ss: arg!.ss,
+            email: arg.email,
+            about: arg.about,
+          );
+        });
       default:
         return MaterialPageRoute(
             builder: (context) => Scaffold(

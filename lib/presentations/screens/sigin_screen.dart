@@ -106,8 +106,8 @@ class SignInScreen extends StatelessWidget {
                       context.read<LoginBloc>().add(SignUpAddEvent(
                           email: email.text, password: password.text));
                       LocalStorage().writedata(name: email.text);
-                      CloudStorages()
-                          .userinfo(name: name.text, email: email.text);
+                      CloudStorages().userinfo(
+                          name: name.text, email: email.text, about: '');
                     } else {
                       showsnackBar(
                           context: context,

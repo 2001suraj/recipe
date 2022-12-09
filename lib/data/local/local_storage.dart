@@ -12,9 +12,9 @@ class LocalStorage {
     return data!;
   }
 
-  Future clear() async {
+  Future clear({required String key}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.remove('name');
+    preferences.remove(key);
   }
  
   

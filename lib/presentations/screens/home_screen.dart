@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/data/local/local_storage.dart';
 import 'package:recipe_app/presentations/pages/discover_page.dart';
 import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
 import 'package:recipe_app/presentations/screens/login_screen.dart';
@@ -68,17 +70,50 @@ class _HomeScreenState extends State<HomeScreen>
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushNamed(
-                            context, ProfileScreen.routeName);
+                        Navigator.pushNamed(context, ProfileScreen.routeName);
                       },
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 20,
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.grey,
-                        ),
+                      child: SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: FutureBuilder(
+                            future: LocalStorage().readdata(),
+                            builder: (context1, snap) {
+                              return StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('user')
+                                    .snapshots(),
+                                builder: (context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return ListView.builder(
+                                        itemCount: 1,
+                                        itemBuilder: (context, index) {
+                                          return snapshot.data!.docs[index]
+                                                      ['image'] ==
+                                                  null
+                                              ? CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundImage: AssetImage(
+                                                      'assets/images/user1.png'),
+                                                )
+                                              : CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundImage: NetworkImage(
+                                                    snapshot.data!.docs[index]
+                                                        ['image'],
+                                                  ),
+                                                );
+                                        });
+                                  } else {
+                                    return FittedBox(
+                                        child: Text('no data founnd'));
+                                  }
+                                },
+                              );
+                            }),
                       ),
+
+              
                     ),
                   ),
                 ),

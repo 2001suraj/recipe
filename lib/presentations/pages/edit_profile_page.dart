@@ -4,13 +4,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:recipe_app/data/local/local_storage.dart';
-import 'package:recipe_app/presentations/widgets/normal_text_field.dart';
+import 'package:recipe_app/data/repo/cloud_storage.dart';
+import 'package:recipe_app/presentations/screens/profile_screen.dart';
+import 'package:recipe_app/presentations/widgets/show__snackbar.dart';
 
 class EditProfilePage extends StatefulWidget {
   static const String routeName = 'edit profile page';
-  EditProfilePage({Key? key, required this.ss}) : super(key: key);
+  EditProfilePage(
+      {Key? key, required this.ss, required this.email, required this.about})
+      : super(key: key);
   final String ss;
+  final String email;
+  final String about;
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
@@ -19,11 +24,12 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController name;
 
-  TextEditingController about = TextEditingController();
+  late TextEditingController about;
   @override
   void initState() {
     // TODO: implement initState
     name = TextEditingController(text: widget.ss);
+    about = TextEditingController(text: widget.about);
     super.initState();
   }
 
@@ -78,8 +84,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               ),
                             ),
                           ),
-
-                 
                     Positioned(
                       bottom: 0,
                       right: 0,
@@ -167,7 +171,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 color: Colors.amber,
                 height: 50,
                 minWidth: MediaQuery.of(context).size.width,
-                onPressed: () {},
+                onPressed: () {
+                  var ii = File(image!.path);
+                  CloudStorages().userinfo_update(
+                    email: widget.email,
+                    name: name.text,
+                    about: about.text,
+                  );
+                  CloudStorages().profilesetup(
+                      photo: ii, name: widget.email, email: widget.email);
+
+                  print('a');
+                  showsnackBar(
+                      context: context,
+                      text: 'successfully updated',
+                      color: Colors.green);
+                  Navigator.pushReplacementNamed(
+                      context, ProfileScreen.routeName);
+                },
                 child: Text(
                   'save',
                   textAlign: TextAlign.center,

@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/data/local/local_storage.dart';
 import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
 import 'package:recipe_app/presentations/screens/main_screen.dart';
 import 'package:recipe_app/presentations/screens/profile_screen.dart';
@@ -355,12 +357,44 @@ class _DiscoverPageState extends State<DiscoverPage> {
           onTap: () {
             Navigator.pushNamed(context, ProfileScreen.routeName);
           },
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            radius: 15,
-            child: Icon(
-              Icons.person,
-              color: Colors.grey,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 14.0, right: 10),
+            child: SizedBox(
+              height: 30,
+              width: 30,
+              child: FutureBuilder(
+                  future: LocalStorage().readdata(),
+                  builder: (context1, snap) {
+                    return StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('user')
+                          .snapshots(),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                return snapshot.data!.docs[index]['image'] ==
+                                        null
+                                    ? CircleAvatar(
+                                        radius: 15,
+                                        backgroundImage: AssetImage(
+                                            'assets/images/user1.png'),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 15,
+                                        backgroundImage: NetworkImage(
+                                          snapshot.data!.docs[index]['image'],
+                                        ),
+                                      );
+                              });
+                        } else {
+                          return FittedBox(child: Text('no data founnd'));
+                        }
+                      },
+                    );
+                  }),
             ),
           ),
         ),

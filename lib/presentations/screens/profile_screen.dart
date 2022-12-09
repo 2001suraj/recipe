@@ -25,16 +25,50 @@ class ProfileScreen extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                    ),
-                    child: Center(
-                      child: CircleAvatar(
-                        radius: 130,
-                        backgroundImage: AssetImage('assets/images/user1.png'),
+                  Positioned(
+                    top: 50,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                      ),
+                      child: Center(
+                        child: FutureBuilder(
+                            future: LocalStorage().readdata(),
+                            builder: (context1, snap) {
+                              return StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('user')
+                                    .snapshots(),
+                                builder: (context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return ListView.builder(
+                                        itemCount: 1,
+                                        itemBuilder: (context, index) {
+                                          return snapshot.data!.docs[index]
+                                                      ['image'] ==
+                                                  null
+                                              ? CircleAvatar(
+                                                  radius: 130,
+                                                  backgroundImage: AssetImage(
+                                                      'assets/images/user1.png'),
+                                                )
+                                              : CircleAvatar(
+                                                  radius: 130,
+                                                  backgroundImage: NetworkImage(
+                                                    snapshot.data!.docs[index]
+                                                        ['image'],
+                                                  ),
+                                                );
+                                        });
+                                  } else {
+                                    return Text('no data founnd');
+                                  }
+                                },
+                              );
+                            }),
                       ),
                     ),
                   ),
@@ -64,10 +98,39 @@ class ProfileScreen extends StatelessWidget {
                           color: Colors.white),
                       child: IconButton(
                         onPressed: () {
-                          context.read<LogoutBloc>().add(logoutAddEvent());
-                          LocalStorage().clear();
-                          Navigator.pushReplacementNamed(
-                              context, LoginScreen.routeName);
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text("Logout ?"),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(ctx).pop();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(14),
+                                    child: const Text("No"),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    // Navigator.of(ctx).pop();
+                                    context
+                                        .read<LogoutBloc>()
+                                        .add(logoutAddEvent());
+                                    LocalStorage().clear(key: 'name');
+                                    LocalStorage().clear(key: 'imageurl');
+                                    Navigator.pushReplacementNamed(
+                                        context, LoginScreen.routeName);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(14),
+                                    child: const Text("yes"),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
                         },
                         icon: Icon(
                           Icons.logout,
@@ -87,12 +150,12 @@ class ProfileScreen extends StatelessWidget {
                       },
                       child: Container()),
                   Positioned(
-                    bottom: 180,
+                    bottom: 100,
                     left: 0,
                     right: 0,
                     child: Container(
                       margin: EdgeInsets.all(30),
-                      height: MediaQuery.of(context).size.height * 0.3,
+                      height: MediaQuery.of(context).size.height * 0.4,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -111,7 +174,7 @@ class ProfileScreen extends StatelessWidget {
                                   return Column(
                                     children: [
                                       Container(
-                                        height: 100,
+                                        height: 180,
                                         child: ListView.builder(
                                             itemCount:
                                                 snapshot.data!.docs.length,
@@ -121,16 +184,42 @@ class ProfileScreen extends StatelessWidget {
                                               if (user['email'] == snap.data) {
                                                 return Column(
                                                   children: [
-                                                    // if (user['email'] ==
-                                                    //     snap.data)
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
                                                     Text(
                                                       user['name'],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .headline4!
                                                           .copyWith(
                                                               color:
                                                                   Colors.white),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.7,
+                                                      child: Text(
+                                                        user['about'],
+                                                        maxLines: 3,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge!
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .white),
+                                                      ),
                                                     ),
                                                     SizedBox(
                                                       height: 20,
@@ -141,10 +230,17 @@ class ProfileScreen extends StatelessWidget {
                                                             context,
                                                             EditProfilePage
                                                                 .routeName,
-                                                            arguments: snapshot
-                                                                    .data!
-                                                                    .docs[index]
-                                                                ['name']);
+                                                            arguments: EditProfilePage(
+                                                                about: snapshot
+                                                                        .data!
+                                                                        .docs[index]
+                                                                    ['about'],
+                                                                ss: snapshot
+                                                                        .data!
+                                                                        .docs[index]
+                                                                    ['name'],
+                                                                email: snap.data
+                                                                    .toString()));
                                                       },
                                                       child: Container(
                                                         decoration:
