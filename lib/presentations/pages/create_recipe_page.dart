@@ -1,12 +1,17 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, unnecessary_new
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:recipe_app/data/local/local_storage.dart';
+import 'package:recipe_app/data/models/recipe_model.dart';
+import 'package:recipe_app/data/repo/cloud_storage.dart';
+import 'package:recipe_app/data/repo/recipe_repo.dart';
 
 import 'package:recipe_app/presentations/screens/main_screen.dart';
+import 'package:recipe_app/presentations/widgets/show__snackbar.dart';
 
 class CreateRecipePage extends StatefulWidget {
   static const String routeName = 'create recipe page';
@@ -20,6 +25,23 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
   XFile? image;
   List<Widget> ingredients = [];
   List<Widget> steps = [];
+
+  TextEditingController title = TextEditingController();
+  TextEditingController des = TextEditingController();
+  TextEditingController time = TextEditingController();
+  List<TextEditingController> ingr = [];
+  List<TextEditingController> step = [];
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    for (TextEditingController t in ingr) {
+      t.dispose();
+    }
+    for (TextEditingController t in step) {
+      t.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,22 +60,51 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
           'create',
         ),
         actions: [
-          Container(
-            margin: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(13),
-              color: Colors.white,
-            ),
-            width: 90,
-            child: Center(
-              child: Text(
-                'Publish',
-                textAlign: TextAlign.center,
-                style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-              ),
-            ),
-          )
+          FutureBuilder(
+              future: LocalStorage().readdata(),
+              builder: (context, snapshot) {
+                return InkWell(
+                  onTap: () {
+                    var rec = Recipes(
+                        photourl: '',
+                        title: title.text,
+                        description: des.text,
+                        cook_time: time.text,
+                        ingredient: ingr.map((e) => e.text).toList(),
+                        steps: step.map((e) => e.text).toList());
+
+                    var pp = File(image!.path);
+                    RecipeRepo().addRecipes(
+                        recipes: rec, email: snapshot.data.toString());
+                    CloudStorages().addrecipephoto(
+                        photo: pp,
+                        title: title.text,
+                        email: snapshot.data.toString());
+                    showsnackBar(
+                        context: context,
+                        text: 'added new recipe',
+                        color: Colors.green);
+                    Navigator.pushReplacementNamed(
+                        context, MainScreen.routeName);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(13),
+                      color: Colors.white,
+                    ),
+                    width: 90,
+                    child: Center(
+                      child: Text(
+                        'Publish',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.red, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                );
+              })
         ],
       ),
       body: SingleChildScrollView(
@@ -121,6 +172,7 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: TextField(
+                  controller: title,
                   maxLines: 2,
                   style: TextStyle(
                       fontSize: 20,
@@ -145,6 +197,7 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: TextField(
+                  controller: des,
                   maxLines: 7,
                   style: TextStyle(
                       fontSize: 20,
@@ -186,6 +239,7 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                       width: MediaQuery.of(context).size.width / 2,
                       height: 50,
                       child: TextField(
+                        controller: time,
                         maxLines: 1,
                         style: TextStyle(
                             fontSize: 20,
@@ -212,208 +266,241 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
               Divider(color: Colors.grey, thickness: 7),
 
               //ingredients
-              Container(
-                child: Column(
-                  children: [
-                    Text(
-                      'Ingredients',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 25),
-                    ),
-                    Container(
-                      height: 290,
-                      child: ListView.builder(
-                        itemCount: ingredients.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    height: 40,
-                                    width: 40,
-                                    margin: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Colors.blue,
-                                    ),
-                                    child: Center(
-                                        child: Text(
-                                      '${index + 1}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20),
-                                    )),
-                                  ),
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.4,
-                                    height: 50,
-                                    child: TextField(
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                      decoration: InputDecoration(
-                                        hintText: '250 g flour ',
-                                        hintStyle: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                            color: Colors.white54),
-                                        fillColor: Colors.grey,
-                                        filled: true,
-                                        border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.white),
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: MaterialButton(
-                        height: 50,
-                        minWidth: 200,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        color: Colors.blue,
-                        onPressed: () {
-                          setState(() {
-                            ingredients.add(Container());
-                          });
-                        },
-                        child: Text(
-                          '+ Ingredients',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 20),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              IngredientsContainer(
+                ingre: ingr,
               ),
+
               Divider(
                 color: Colors.grey,
                 thickness: 8,
               ),
               // steps
-              Container(
-                child: Column(
-                  children: [
-                    Text(
-                      'Steps',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 25),
-                    ),
-                    Container(
-                      height: 290,
-                      child: ListView.builder(
-                        itemCount: steps.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    height: 40,
-                                    width: 40,
-                                    margin: EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Colors.white,
-                                    ),
-                                    child: Center(
-                                        child: Text(
-                                      '${index + 1}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                          fontSize: 20),
-                                    )),
-                                  ),
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.4,
-                                    height: 70,
-                                    child: TextField(
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                      decoration: InputDecoration(
-                                        hintText:
-                                            'Mix the flour and water until they thicken',
-                                        hintStyle: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                            color: Colors.white54),
-                                        fillColor: Colors.grey,
-                                        filled: true,
-                                        border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.white),
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: MaterialButton(
-                        height: 50,
-                        minWidth: 200,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        color: Colors.white,
-                        onPressed: () {
-                          setState(() {
-                            steps.add(Container());
-                          });
-                        },
-                        child: Text(
-                          '+ Steps',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: 20),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              StepContainer(step: step),
               SizedBox(
                 height: 40,
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class StepContainer extends StatefulWidget {
+  StepContainer({Key? key, required this.step}) : super(key: key);
+  final List step;
+
+  @override
+  State<StepContainer> createState() => _StepContainerState();
+}
+
+class _StepContainerState extends State<StepContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Text(
+            'Steps',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
+          ),
+          Container(
+            height: 290,
+            child: ListView.builder(
+              itemCount: widget.step.length,
+              itemBuilder: (context, index) {
+                if (index >= 20) {
+                  return const SizedBox();
+                } else {
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            height: 40,
+                            width: 40,
+                            margin: EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.white,
+                            ),
+                            child: Center(
+                                child: Text(
+                              '${index + 1}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 20),
+                            )),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 1.4,
+                            height: 70,
+                            child: TextField(
+                              controller: widget.step[index],
+                              maxLines: 2,
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                              decoration: InputDecoration(
+                                hintText:
+                                    'Mix the flour and water until they thicken',
+                                hintStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.white54),
+                                fillColor: Colors.grey,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: MaterialButton(
+              height: 50,
+              minWidth: 200,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  widget.step.add(TextEditingController());
+                });
+              },
+              child: Text(
+                '+ Steps',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class IngredientsContainer extends StatefulWidget {
+  IngredientsContainer({Key? key, required this.ingre}) : super(key: key);
+  final List ingre;
+
+  @override
+  State<IngredientsContainer> createState() => _IngredientsContainerState();
+}
+
+class _IngredientsContainerState extends State<IngredientsContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Text(
+            'Ingredients',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
+          ),
+          Container(
+            height: 290,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: widget.ingre.length,
+              itemBuilder: (context, int index) {
+                if (index >= 20) {
+                  return const SizedBox();
+                } else {
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            height: 40,
+                            width: 40,
+                            margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.blue,
+                            ),
+                            child: Center(
+                                child: Text(
+                              '${index + 1}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            )),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 1.4,
+                            height: 50,
+                            child: TextField(
+                              controller: widget.ingre[index],
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                              decoration: InputDecoration(
+                                hintText: '250 g flour ',
+                                hintStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.white54),
+                                fillColor: Colors.grey,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: MaterialButton(
+              height: 50,
+              minWidth: 200,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              color: Colors.blue,
+              onPressed: () {
+                setState(() {
+                  widget.ingre.add(TextEditingController());
+                });
+              },
+              child: Text(
+                '+ Ingredients',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 20),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -8,7 +8,6 @@ import 'package:recipe_app/data/local/local_storage.dart';
 import 'package:recipe_app/presentations/pages/edit_profile_page.dart';
 import 'package:recipe_app/presentations/screens/login_screen.dart';
 import 'package:recipe_app/presentations/screens/main_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const String routeName = 'ProfileScreen';
@@ -20,8 +19,9 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: Colors.grey,
         body: SafeArea(
           child: SingleChildScrollView(
+            primary: true,
             child: Container(
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height * 1.2,
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
@@ -45,26 +45,35 @@ class ProfileScreen extends StatelessWidget {
                                     AsyncSnapshot<QuerySnapshot> snapshot) {
                                   if (snapshot.hasData) {
                                     return ListView.builder(
-                                        itemCount: 1,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: snapshot.data!.docs.length,
                                         itemBuilder: (context, index) {
-                                          return snapshot.data!.docs[index]
-                                                      ['image'] ==
-                                                  null
-                                              ? CircleAvatar(
-                                                  radius: 130,
-                                                  backgroundImage: AssetImage(
-                                                      'assets/images/user1.png'),
-                                                )
-                                              : CircleAvatar(
-                                                  radius: 130,
-                                                  backgroundImage: NetworkImage(
-                                                    snapshot.data!.docs[index]
-                                                        ['image'],
-                                                  ),
-                                                );
+                                          return snap.data.toString() ==
+                                                  snapshot.data!.docs[index]
+                                                      ['email']
+                                              ? snapshot.data!.docs[index]
+                                                          ['image'] ==
+                                                      'null'
+                                                  ? CircleAvatar(
+                                                      radius: 130,
+                                                      backgroundImage: AssetImage(
+                                                          'assets/images/user1.png'),
+                                                    )
+                                                  : CircleAvatar(
+                                                      radius: 130,
+                                                      backgroundImage:
+                                                          NetworkImage(
+                                                        snapshot.data!
+                                                                .docs[index]
+                                                            ['image'],
+                                                      ),
+                                                    )
+                                              : SizedBox();
                                         });
                                   } else {
-                                    return Text('no data founnd');
+                                    return FittedBox(
+                                        child: Text('no data founnd'));
                                   }
                                 },
                               );
@@ -150,7 +159,7 @@ class ProfileScreen extends StatelessWidget {
                       },
                       child: Container()),
                   Positioned(
-                    bottom: 100,
+                    top: 300,
                     left: 0,
                     right: 0,
                     child: Container(
@@ -176,6 +185,8 @@ class ProfileScreen extends StatelessWidget {
                                       Container(
                                         height: 180,
                                         child: ListView.builder(
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
                                             itemCount:
                                                 snapshot.data!.docs.length,
                                             itemBuilder: (context, index) {
@@ -272,31 +283,6 @@ class ProfileScreen extends StatelessWidget {
                                               }
                                             }),
                                       ),
-                                      // InkWell(
-                                      //   onTap: () {
-                                      //     Navigator.pushNamed(context,
-                                      //         EditProfilePage.routeName,
-                                      //         arguments: snapshot.data!.docs[1]
-                                      //             ['name']);
-                                      //   },
-                                      //   child: Container(
-                                      //     decoration: BoxDecoration(
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(15),
-                                      //       color: Colors.white,
-                                      //     ),
-                                      //     width: 120,
-                                      //     height: 40,
-                                      //     child: Center(
-                                      //       child: Text(
-                                      //         'Edit profile',
-                                      //         style: TextStyle(
-                                      //             fontWeight: FontWeight.bold,
-                                      //             color: Colors.black),
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // ),
                                       Container(
                                         width:
                                             MediaQuery.of(context).size.width,
@@ -316,24 +302,57 @@ class ProfileScreen extends StatelessWidget {
                                             SizedBox(
                                               height: 10,
                                             ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Spacer(),
-                                                tText(text: '0'),
-                                                Spacer(),
-                                                Spacer(),
-                                                tText(text: '0'),
-                                                Spacer(),
-                                                Spacer(),
-                                                tText(text: '0'),
-                                                Spacer(),
-                                              ],
-                                            ),
+                                            FutureBuilder(
+                                                future:
+                                                    LocalStorage().readdata(),
+                                                builder: (context1, snap) {
+                                                  return StreamBuilder(
+                                                    stream: FirebaseFirestore
+                                                        .instance
+                                                        .collection('user')
+                                                        .doc(snap.data
+                                                            .toString())
+                                                        .collection('recipes')
+                                                        .snapshots(),
+                                                    builder: (context,
+                                                        AsyncSnapshot<
+                                                                QuerySnapshot>
+                                                            snapshot) {
+                                                      if (snapshot.hasData) {
+                                                        return Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          children: [
+                                                            Spacer(),
+                                                            tText(
+                                                                text: snapshot
+                                                                    .data!
+                                                                    .docs
+                                                                    .length
+                                                                    .toString()),
+                                                            Spacer(),
+                                                            Spacer(),
+                                                            tText(text: '0'),
+                                                            Spacer(),
+                                                            Spacer(),
+                                                            tText(text: '0'),
+                                                            Spacer(),
+                                                          ],
+                                                        );
+                                                      } else {
+                                                        return Text(
+                                                            'no data found');
+                                                      }
+                                                    },
+                                                  );
+                                                }),
                                           ],
                                         ),
-                                      )
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
                                     ],
                                   );
                                 } else {
@@ -343,7 +362,87 @@ class ProfileScreen extends StatelessWidget {
                             );
                           }),
                     ),
-                  )
+                  ),
+                  Positioned(
+                    top: 650,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      margin: EdgeInsets.all(5),
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          // borderRadius: BorderRadius.circular(20),
+                          // color: Colors.black38,
+                          ),
+                      child: FutureBuilder(
+                          future: LocalStorage().readdata(),
+                          builder: (context1, snap) {
+                            return StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('user')
+                                  .doc(snap.data.toString())
+                                  .collection('recipes')
+                                  .snapshots(),
+                              builder: (context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.hasData) {
+                                  return ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      shrinkWrap: true,
+                                      itemCount: snapshot.data!.docs.length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              height: 200,
+                                              width: 170,
+                                              margin: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                image: DecorationImage(
+                                                    image: NetworkImage(
+                                                      snapshot.data!.docs[index]
+                                                          ['photourl'],
+                                                    ),
+                                                    fit: BoxFit.cover),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 15.0),
+                                              child: SizedBox(
+                                                width: 150,
+                                                child: Text(
+                                                  snapshot.data!.docs[index]
+                                                      ['title'],
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        );
+                                      });
+                                } else {
+                                  return Text('no data found');
+                                }
+                              },
+                            );
+                          }),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -362,3 +461,34 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
+
+
+// Container(
+//                       margin: EdgeInsets.all(30),
+//                       height: MediaQuery.of(context).size.height * 0.4,
+//                       width: MediaQuery.of(context).size.width,
+//                       decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.circular(20),
+//                         color: Colors.black38,
+//                       ),
+//                       child: FutureBuilder(
+//                           future: LocalStorage().readdata(),
+//                           builder: (context1, snap) {
+//                             return StreamBuilder(
+//                               stream: FirebaseFirestore.instance
+//                                   .collection('user')
+//                                   .snapshots(),
+//                               builder: (context,
+//                                   AsyncSnapshot<QuerySnapshot> snapshot) {
+//                                 if (snapshot.hasData) {
+//                                   return Column();
+
+
+
+//  } else {
+//                                   return Text('no data found');
+//                                 }
+//                               },
+//                             );
+//                           }),
+//                     ),

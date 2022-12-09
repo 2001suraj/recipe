@@ -375,19 +375,23 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           return ListView.builder(
                               itemCount: snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
-                                return snapshot.data!.docs[index]['image'] ==
-                                        null
-                                    ? CircleAvatar(
-                                        radius: 15,
-                                        backgroundImage: AssetImage(
-                                            'assets/images/user1.png'),
-                                      )
-                                    : CircleAvatar(
-                                        radius: 15,
-                                        backgroundImage: NetworkImage(
-                                          snapshot.data!.docs[index]['image'],
-                                        ),
-                                      );
+                                return snap.data.toString() ==
+                                        snapshot.data!.docs[index]['email']
+                                    ? snapshot.data!.docs[index]['image'] ==
+                                            'null'
+                                        ? CircleAvatar(
+                                            radius: 15,
+                                            backgroundImage: AssetImage(
+                                                'assets/images/user1.png'),
+                                          )
+                                        : CircleAvatar(
+                                            radius: 15,
+                                            backgroundImage: NetworkImage(
+                                              snapshot.data!.docs[index]
+                                                  ['image'],
+                                            ),
+                                          )
+                                    : SizedBox();
                               });
                         } else {
                           return FittedBox(child: Text('no data founnd'));

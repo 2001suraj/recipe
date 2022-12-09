@@ -72,48 +72,55 @@ class _HomeScreenState extends State<HomeScreen>
                       onTap: () {
                         Navigator.pushNamed(context, ProfileScreen.routeName);
                       },
-                      child: SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: FutureBuilder(
-                            future: LocalStorage().readdata(),
-                            builder: (context1, snap) {
-                              return StreamBuilder(
-                                stream: FirebaseFirestore.instance
-                                    .collection('user')
-                                    .snapshots(),
-                                builder: (context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (snapshot.hasData) {
-                                    return ListView.builder(
-                                        itemCount: 1,
-                                        itemBuilder: (context, index) {
-                                          return snapshot.data!.docs[index]
-                                                      ['image'] ==
-                                                  null
-                                              ? CircleAvatar(
-                                                  radius: 20,
-                                                  backgroundImage: AssetImage(
-                                                      'assets/images/user1.png'),
-                                                )
-                                              : CircleAvatar(
-                                                  radius: 20,
-                                                  backgroundImage: NetworkImage(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10.0, right: 10),
+                        child: SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: FutureBuilder(
+                              future: LocalStorage().readdata(),
+                              builder: (context1, snap) {
+                                return StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('user')
+                                      .snapshots(),
+                                  builder: (context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasData) {
+                                      return ListView.builder(
+                                          itemCount: snapshot.data!.docs.length,
+                                          itemBuilder: (context, index) {
+                                            return snap.data.toString() ==
                                                     snapshot.data!.docs[index]
-                                                        ['image'],
-                                                  ),
-                                                );
-                                        });
-                                  } else {
-                                    return FittedBox(
-                                        child: Text('no data founnd'));
-                                  }
-                                },
-                              );
-                            }),
+                                                        ['email']
+                                                ? snapshot.data!.docs[index]
+                                                            ['image'] ==
+                                                        'null'
+                                                    ? CircleAvatar(
+                                                        radius: 20,
+                                                        backgroundImage: AssetImage(
+                                                            'assets/images/user1.png'),
+                                                      )
+                                                    : CircleAvatar(
+                                                        radius: 20,
+                                                        backgroundImage:
+                                                            NetworkImage(
+                                                          snapshot.data!
+                                                                  .docs[index]
+                                                              ['image'],
+                                                        ),
+                                                      )
+                                                : SizedBox();
+                                          });
+                                    } else {
+                                      return FittedBox(
+                                          child: Text('no data founnd'));
+                                    }
+                                  },
+                                );
+                              }),
+                        ),
                       ),
-
-              
                     ),
                   ),
                 ),

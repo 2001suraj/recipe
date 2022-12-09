@@ -178,10 +178,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     name: name.text,
                     about: about.text,
                   );
-                  CloudStorages().profilesetup(
-                      photo: ii, name: widget.email, email: widget.email);
+                  image == null
+                      ? SizedBox()
+                      : CloudStorages().profilesetup(
+                          photo: ii, name: widget.email, email: widget.email);
 
-                  print('a');
                   showsnackBar(
                       context: context,
                       text: 'successfully updated',
