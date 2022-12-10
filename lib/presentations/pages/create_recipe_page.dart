@@ -1,8 +1,10 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first, unnecessary_new
+// ignore_for_file: public_member_api_docs, sort_constructors_first, unnecessary_new, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, sized_box_for_whitespace
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:recipe_app/data/local/local_storage.dart';
@@ -33,7 +35,6 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
   List<TextEditingController> step = [];
   @override
   void dispose() {
-    // TODO: implement dispose
     for (TextEditingController t in ingr) {
       t.dispose();
     }
@@ -62,48 +63,80 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
         actions: [
           FutureBuilder(
               future: LocalStorage().readdata(),
-              builder: (context, snapshot) {
-                return InkWell(
-                  onTap: () {
-                    var rec = Recipes(
-                        photourl: '',
-                        title: title.text,
-                        description: des.text,
-                        cook_time: time.text,
-                        ingredient: ingr.map((e) => e.text).toList(),
-                        steps: step.map((e) => e.text).toList());
+              builder: (context, snapshot1) {
+                return StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('user')
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      return Container(
+                        width: 120,
+                        height: 80,
+                        child: ListView.builder(
+                            itemCount: snapshot.data!.docChanges.length,
+                            itemBuilder: (context, index) {
+                              if (snapshot.data!.docs[index]['email'] ==
+                                  snapshot1.data) {
+                                return InkWell(
+                                  onTap: () {
+                                    var rec = Recipes(
+                                        owner: snapshot
+                                            .data!.docs[index]['name']
+                                            .toString(),
+                                        photourl: '',
+                                        title: title.text,
+                                        description: des.text,
+                                        cook_time: time.text,
+                                        ingredient:
+                                            ingr.map((e) => e.text).toList(),
+                                        steps:
+                                            step.map((e) => e.text).toList());
 
-                    var pp = File(image!.path);
-                    RecipeRepo().addRecipes(
-                        recipes: rec, email: snapshot.data.toString());
-                    CloudStorages().addrecipephoto(
-                        photo: pp,
-                        title: title.text,
-                        email: snapshot.data.toString());
-                    showsnackBar(
-                        context: context,
-                        text: 'added new recipe',
-                        color: Colors.green);
-                    Navigator.pushReplacementNamed(
-                        context, MainScreen.routeName);
-                  },
-                  child: Container(
-                    margin: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(13),
-                      color: Colors.white,
-                    ),
-                    width: 90,
-                    child: Center(
-                      child: Text(
-                        'Publish',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                );
+                                    var pp = File(image!.path);
+                                    RecipeRepo().addRecipes(
+                                      email: snapshot1.data.toString(),
+                                      recipes: rec,
+                                    );
+                                    CloudStorages().addrecipephoto(
+                                        photo: pp,
+                                        title: title.text,
+                                        email: snapshot1.data.toString());
+                                    showsnackBar(
+                                        context: context,
+                                        text: 'added new recipe',
+                                        color: Colors.green);
+                                    Navigator.pushReplacementNamed(
+                                        context, MainScreen.routeName);
+                                  },
+                                  child: Container(
+                                    height: 30,
+                                    margin: EdgeInsets.only(
+                                        top: 20,
+                                        left: 10,
+                                        right: 15,
+                                        bottom: 5),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(13),
+                                      color: Colors.white,
+                                    ),
+                                    width: 90,
+                                    child: Center(
+                                      child: Text(
+                                        'Publish',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return SizedBox();
+                              }
+                            }),
+                      );
+                    });
               })
         ],
       ),
@@ -224,7 +257,7 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
               //time
               Container(
                 margin: EdgeInsets.symmetric(vertical: 20),
-                height: 50,
+                height: 90,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -237,10 +270,10 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width / 2,
-                      height: 50,
+                      // height: 100,
                       child: TextField(
                         controller: time,
-                        maxLines: 1,
+                        maxLines: 2,
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.white,
@@ -336,28 +369,31 @@ class _StepContainerState extends State<StepContainer> {
                                   fontSize: 20),
                             )),
                           ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 1.4,
-                            height: 70,
-                            child: TextField(
-                              controller: widget.step[index],
-                              maxLines: 2,
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                              decoration: InputDecoration(
-                                hintText:
-                                    'Mix the flour and water until they thicken',
-                                hintStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width / 1.4,
+                              height: 90,
+                              child: TextField(
+                                controller: widget.step[index],
+                                maxLines: 2,
+                                style: TextStyle(
                                     fontSize: 20,
-                                    color: Colors.white54),
-                                fillColor: Colors.grey,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(15),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                decoration: InputDecoration(
+                                  hintText:
+                                      'Mix the flour and water until they thicken',
+                                  hintStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.white54),
+                                  fillColor: Colors.grey,
+                                  filled: true,
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
                               ),
                             ),
@@ -445,27 +481,30 @@ class _IngredientsContainerState extends State<IngredientsContainer> {
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             )),
                           ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 1.4,
-                            height: 50,
-                            child: TextField(
-                              controller: widget.ingre[index],
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                              decoration: InputDecoration(
-                                hintText: '250 g flour ',
-                                hintStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width / 1.4,
+                              height: 60,
+                              child: TextField(
+                                controller: widget.ingre[index],
+                                maxLines: 1,
+                                style: TextStyle(
                                     fontSize: 20,
-                                    color: Colors.white54),
-                                fillColor: Colors.grey,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(15),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                decoration: InputDecoration(
+                                  hintText: '250 g flour ',
+                                  hintStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.white54),
+                                  fillColor: Colors.grey,
+                                  filled: true,
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
                               ),
                             ),

@@ -1,9 +1,7 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_constructors_in_immutables
 
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:recipe_app/business_logic/logout/logout_bloc.dart';
 import 'package:recipe_app/presentations/screens/add_screen.dart';
 import 'package:recipe_app/presentations/screens/fav_screen.dart';
 import 'package:recipe_app/presentations/screens/home_screen.dart';

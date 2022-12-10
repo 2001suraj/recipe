@@ -1,12 +1,13 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, sized_box_for_whitespace
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/data/local/local_storage.dart';
 import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
 import 'package:recipe_app/presentations/screens/main_screen.dart';
 import 'package:recipe_app/presentations/screens/profile_screen.dart';
-import 'package:recipe_app/presentations/widgets/cus_title.dart';
 import 'package:recipe_app/presentations/widgets/dot_indicator.dart';
 
 class DiscoverPage extends StatefulWidget {
@@ -42,102 +43,166 @@ class _DiscoverPageState extends State<DiscoverPage> {
               //. image contianer
               Container(
                 height: MediaQuery.of(context).size.height * 0.35,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  primary: false,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, IndividualPage.routeName);
-                            },
-                            child: Stack(
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('today_recipe')
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.35,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          primary: false,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    image: DecorationImage(
-                                        image: AssetImage(
-                                          'assets/images/1.jpg',
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        IndividualPage.routeName,
+                                        arguments: IndividualPage(
+                                          name: snapshot.data!.docs[index]
+                                              ['owner'],
+                                          // name: 'ram',
+                                          des: snapshot.data!.docs[index]
+                                              ['description'],
+                                          time: snapshot.data!.docs[index]
+                                              ['cook_time'],
+                                          image: snapshot.data!.docs[index]
+                                              ['photourl'],
+                                          ingr: snapshot.data!.docs[index]
+                                              ['ingredient'],
+                                          step: snapshot.data!.docs[index]
+                                              ['steps'],
+                                          title: snapshot.data!.docs[index]
+                                              ['title'],
                                         ),
-                                        fit: BoxFit.cover),
-                                  ),
-                                  height: 200,
-                                  width: 180,
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(20),
-                                            bottomRight: Radius.circular(20)),
-                                        color: Colors.white.withOpacity(0.6)),
-                                    height: 40,
-                                    width: 180,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      );
+                                    },
+                                    child: Stack(
                                       children: [
-                                        Row(
-                                          children: [
-                                            Icon(Icons.favorite_border),
-                                            Text(
-                                              '121',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
-                                            ),
-                                          ],
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            image: DecorationImage(
+                                                image: NetworkImage(
+                                                  snapshot.data!.docs[index]
+                                                      ['photourl'],
+                                                ),
+                                                fit: BoxFit.cover),
+                                          ),
+                                          height: 200,
+                                          width: 180,
                                         ),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.timer_outlined),
-                                            Text(
-                                              '13 mins',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 9),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(20),
+                                                    bottomRight:
+                                                        Radius.circular(20)),
+                                                color: Colors.white
+                                                    .withOpacity(0.6)),
+                                            height: 40,
+                                            width: 180,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                SizedBox(
+                                                  width: 50,
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(Icons
+                                                          .favorite_border),
+                                                      Text(
+                                                        '121',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 100,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Icon(
+                                                          Icons.timer_outlined),
+                                                      Text(
+                                                        snapshot.data!
+                                                                .docs[index]
+                                                            ['cook_time'],
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                          ],
-                                        )
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 18.0, top: 10),
+                                  child: SizedBox(
+                                    width: 150,
+                                    child: Text(
+                                      snapshot.data!.docs[index]['title'],
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                    ),
+                                  ),
+                                )
                               ],
-                            ),
-                          ),
+                            );
+                          },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 150,
-                            child: Text(
-                              '5 ingredients Beef stir-fry',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        )
-                      ],
-                    );
+                      );
+                    }
+                    return Text('no data found');
                   },
                 ),
               ),
+
               //category and view all
               CustomRow(
                 text1: 'Category',
@@ -175,101 +240,158 @@ class _DiscoverPageState extends State<DiscoverPage> {
               ),
               Container(
                 height: MediaQuery.of(context).size.height * 0.5,
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  primary: false,
-                  itemCount: 15,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  itemBuilder: (context, index) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, IndividualPage.routeName);
-                            },
-                            child: Stack(
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('popular_recipe')
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          primary: false,
+                          itemCount: snapshot.data!.docs.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2),
+                          itemBuilder: (context, index) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    image: DecorationImage(
-                                        image: AssetImage(
-                                          'assets/images/1.jpg',
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        IndividualPage.routeName,
+                                        arguments: IndividualPage(
+                                          name: snapshot.data!.docs[index]
+                                              ['owner'],
+                                          des: snapshot.data!.docs[index]
+                                              ['description'],
+                                          time: snapshot.data!.docs[index]
+                                              ['cook_time'],
+                                          image: snapshot.data!.docs[index]
+                                              ['photourl'],
+                                          ingr: snapshot.data!.docs[index]
+                                              ['ingredient'],
+                                          step: snapshot.data!.docs[index]
+                                              ['steps'],
+                                          title: snapshot.data!.docs[index]
+                                              ['title'],
                                         ),
-                                        fit: BoxFit.cover),
-                                  ),
-                                  height: 130,
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(20),
-                                            bottomRight: Radius.circular(20)),
-                                        color: Colors.white.withOpacity(0.6)),
-                                    height: 30,
-                                    width: 180,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      );
+                                    },
+                                    child: Stack(
                                       children: [
-                                        Row(
-                                          children: [
-                                            Icon(Icons.favorite_border),
-                                            Text(
-                                              '121',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
-                                            ),
-                                          ],
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            image: DecorationImage(
+                                                image: NetworkImage(snapshot
+                                                    .data!
+                                                    .docs[index]['photourl']),
+                                                fit: BoxFit.cover),
+                                          ),
+                                          height: 150,
                                         ),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.timer_outlined),
-                                            Text(
-                                              '13 mins',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(20),
+                                                    bottomRight:
+                                                        Radius.circular(20)),
+                                                color: Colors.white
+                                                    .withOpacity(0.6)),
+                                            height: 30,
+                                            width: 180,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                SizedBox(
+                                                  width: 50,
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(Icons
+                                                          .favorite_border),
+                                                      Text(
+                                                        '121',
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 100,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Icon(
+                                                          Icons.timer_outlined),
+                                                      Text(
+                                                        snapshot.data!
+                                                                .docs[index]
+                                                            ['cook_time'],
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                          ],
-                                        )
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.all(7),
+                                  child: SizedBox(
+                                    width: 150,
+                                    child: Text(
+                                      snapshot.data!.docs[index]['title'],
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                    ),
+                                  ),
+                                )
                               ],
-                            ),
-                          ),
+                            );
+                          },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(7),
-                          child: SizedBox(
-                            width: 150,
-                            child: Text(
-                              '5 ingredients Beef stir-fry',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        )
-                      ],
-                    );
-                  },
-                ),
+                      );
+                    }),
               ),
 
               SizedBox(

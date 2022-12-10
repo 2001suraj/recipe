@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_constructors_in_immutables
 import 'package:flutter/material.dart';
 import 'package:recipe_app/data/models/onboard_model.dart';
 import 'package:recipe_app/presentations/screens/login_screen.dart';

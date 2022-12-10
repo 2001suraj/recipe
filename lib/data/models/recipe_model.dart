@@ -1,7 +1,10 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class Recipes {
+  String owner;
   String photourl;
   String title;
   String description;
@@ -10,6 +13,7 @@ class Recipes {
   List<String> steps;
   Recipes({
     required this.photourl,
+    required this.owner,
     required this.title,
     required this.description,
     required this.cook_time,
@@ -21,6 +25,7 @@ class Recipes {
     return <String, dynamic>{
       'photourl': photourl,
       'title': title,
+      'owner': owner,
       'description': description,
       'cook_time': cook_time,
       'ingredient': ingredient,
@@ -31,6 +36,7 @@ class Recipes {
   factory Recipes.fromMap(Map<String, dynamic> map) {
     return Recipes(
       photourl: map['photourl'] as String,
+      owner: map['owner'] as String,
       title: map['title'] as String,
       description: map['description'] as String,
       cook_time: map['cook_time'] as String,
@@ -41,5 +47,6 @@ class Recipes {
 
   String toJson() => json.encode(toMap());
 
-  factory Recipes.fromJson(String source) => Recipes.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Recipes.fromJson(String source) =>
+      Recipes.fromMap(json.decode(source) as Map<String, dynamic>);
 }

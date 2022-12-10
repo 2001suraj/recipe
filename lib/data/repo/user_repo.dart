@@ -23,7 +23,7 @@ class UserRepo {
   }
 
   Future<bool> isSignin() async {
-    var user = await auth.currentUser;
+    var user =  auth.currentUser;
     return user != null;
   }
 

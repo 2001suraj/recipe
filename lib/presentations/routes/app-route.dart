@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, prefer_const_constructors, unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:recipe_app/presentations/pages/create_recipe_page.dart';
 import 'package:recipe_app/presentations/pages/discover_page.dart';
@@ -17,7 +19,6 @@ import 'package:recipe_app/presentations/screens/sigin_screen.dart';
 
 class AppRoute {
   Route? ongenerateRoute(RouteSettings routeSettings) {
-    final EditProfilePage? arg = routeSettings.arguments as EditProfilePage?;
     switch (routeSettings.name) {
       case MainScreen.routeName:
         return MaterialPageRoute(builder: (context) => MainScreen());
@@ -46,9 +47,23 @@ class AppRoute {
       case DiscoverPage.routeName:
         return MaterialPageRoute(builder: (context) => DiscoverPage());
       case IndividualPage.routeName:
-        return MaterialPageRoute(builder: (context) => IndividualPage());
+        return MaterialPageRoute(builder: (context) {
+          final IndividualPage? individual =
+              routeSettings.arguments as IndividualPage?;
+          return IndividualPage(
+              des: individual!.des,
+            name: individual.name,
+
+              time: individual.time,
+              image: individual.image,
+              ingr: individual.ingr,
+              step: individual.step,
+              title: individual.title);
+        });
       case EditProfilePage.routeName:
         return MaterialPageRoute(builder: (context) {
+          final EditProfilePage? arg =
+              routeSettings.arguments as EditProfilePage?;
           EditProfilePage argument;
           return EditProfilePage(
             ss: arg!.ss,

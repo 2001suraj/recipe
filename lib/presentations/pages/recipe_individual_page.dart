@@ -1,10 +1,29 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable, sized_box_for_whitespace, avoid_unnecessary_containers, non_constant_identifier_names
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/data/local/local_storage.dart';
 
 class IndividualPage extends StatelessWidget {
   static const String routeName = 'individual page';
-  const IndividualPage({Key? key}) : super(key: key);
+  IndividualPage(
+      {Key? key,
+      required this.des,
+      required this.name,
+      required this.time,
+      required this.image,
+      required this.ingr,
+      required this.step,
+      required this.title})
+      : super(key: key);
+  String title;
+  String image;
+  String name;
+
+  String des;
+  String time;
+  List ingr;
+  List step;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +39,7 @@ class IndividualPage extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: AssetImage('assets/images/1.jpg'),
-                      fit: BoxFit.cover),
+                      image: NetworkImage(image), fit: BoxFit.cover),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -55,41 +73,69 @@ class IndividualPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     // by author and likes
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'By Ram',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '8',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            ),
-                          ],
-                        )
-                      ],
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      width: MediaQuery.of(context).size.width,
+                      child: FutureBuilder(
+                          future: LocalStorage().readdata(),
+                          builder: (context1, snap) {
+                            return StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('user')
+                                  .snapshots(),
+                              builder: (context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.hasData) {
+                                  return ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: 1,
+                                      itemBuilder: (context, index) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              ' By  ' + name,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  '8',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20),
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Icon(
+                                                  Icons.favorite,
+                                                  color: Colors.red,
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        );
+                                      });
+                                } else {
+                                  return Text('no data found');
+                                }
+                              },
+                            );
+                          }),
                     ),
+
                     SizedBox(
                       height: 20,
                     ), //title
                     Text(
-                      'Chinese chicken and Broccoli / simming & weight watcher friendly',
+                      title,
                       textAlign: TextAlign.left,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
@@ -102,7 +148,7 @@ class IndividualPage extends StatelessWidget {
                       height: 15,
                     ),
                     Text(
-                      'We\'re big fan of the chinese takeaway, so we\'re always looking for slimming friendly alternatives. Enter chinese chicken and broccoli! ',
+                      des,
                       textAlign: TextAlign.left,
                       maxLines: 8,
                       overflow: TextOverflow.ellipsis,
@@ -117,14 +163,14 @@ class IndividualPage extends StatelessWidget {
                     ),
                     Text.rich(
                       TextSpan(
-                        text: 'Ready In ',
+                        text: 'Ready In    :    ',
                         style: TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
                             fontSize: 18),
                         children: [
                           TextSpan(
-                            text: '  30 minutes',
+                            text: time,
                             style: TextStyle(color: Colors.black),
                           ),
                         ],
@@ -146,17 +192,18 @@ class IndividualPage extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 30),
                           ),
-                          IngredientsText(text: '6 tbsp balsamic vinegar'),
-                          IngredientsText(
-                              text: '1/2 cup zesty italian dressing'),
-                          IngredientsText(text: '1lb chicken'),
-                          IngredientsText(text: '2 heads broccoli'),
-                          IngredientsText(text: '1 cup baby carrot'),
-                          IngredientsText(text: '0.5 pint cherry tomatoes'),
-                          IngredientsText(text: 'salt'),
-                          IngredientsText(text: 'fresh parsley'),
-                          IngredientsText(text: 'pepper'),
-                          IngredientsText(text: 'oil'),
+                          Container(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: ingr.length,
+                              itemBuilder: (context, index) {
+                                return IngredientsText(context,
+                                    text: ingr[index],
+                                    index: '${index + 1} : ');
+                              },
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -176,25 +223,17 @@ class IndividualPage extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 30),
                           ),
-                          StepsRow(
-                            index: '1',
-                            text:
-                                'Preheat the overn to 400 degrees F. Spray a large tray with nonstick spray(line  with parchment paper if you tray isn\'t already nostick or the balsmic + italian misture will stick ot it) and set aside',
-                          ),
-                          StepsRow(
-                            index: '2',
-                            text:
-                                'Whisk together the balsamic vinegar and zesty italian dressing',
-                          ),
-                          StepsRow(
-                            index: '3',
-                            text:
-                                'cook all the way through in 7-10 minutes an another time it took about 14 minutes',
-                          ),
-                          StepsRow(
-                            index: '4',
-                            text: 'Great served over rice or quinoa!',
-                          ),
+                          Container(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: step.length,
+                              itemBuilder: (context, index) {
+                                return StepsRow(
+                                    index: '${index + 1}', text: step[index]);
+                              },
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -236,18 +275,39 @@ class IndividualPage extends StatelessWidget {
           ),
           Expanded(
             flex: 1,
-            child: IngredientsText(text: text),
+            child: Text(
+              text,
+              style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Text IngredientsText({required String text}) {
-    return Text(
-      text,
-      style: TextStyle(
-          color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 17),
-    );
+  Row IngredientsText(BuildContext context,
+      {required String text, required String index}) {
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        index,
+        style: TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
+      ),
+      SizedBox(
+        width: 5,
+      ),
+      SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Text(
+          text,
+          maxLines: 3,
+          style: TextStyle(
+              color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 17),
+        ),
+      )
+    ]);
   }
 }

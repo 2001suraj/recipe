@@ -19,7 +19,7 @@ class AddScreen extends StatelessWidget {
               height: 300,
               width: 200,
               color: Colors.red,
-              image: const AssetImage(
+              image:  AssetImage(
                 'assets/images/add.png',
               ),
             ),
