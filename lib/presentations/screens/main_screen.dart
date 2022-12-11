@@ -3,7 +3,6 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/presentations/screens/add_screen.dart';
-import 'package:recipe_app/presentations/screens/fav_screen.dart';
 import 'package:recipe_app/presentations/screens/home_screen.dart';
 import 'package:recipe_app/presentations/screens/profile_screen.dart';
 import 'package:recipe_app/presentations/screens/search_screen.dart';
@@ -21,7 +20,6 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     SearchScreen(),
     AddScreen(),
-    FavScreen(),
     ProfileScreen(),
   ];
 
@@ -56,7 +54,6 @@ class _MainScreenState extends State<MainScreen> {
                   Icons.add,
                 ),
                 title: 'Add'),
-            TabItem(icon: Icon(Icons.favorite), title: 'Favorite'),
             TabItem(icon: Icon(Icons.person), title: 'Profile'),
           ]),
     );

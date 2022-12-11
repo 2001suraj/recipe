@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/data/local/local_storage.dart';
 
-class IndividualPage extends StatelessWidget {
+class IndividualPage extends StatefulWidget {
   static const String routeName = 'individual page';
   IndividualPage(
       {Key? key,
@@ -13,6 +13,7 @@ class IndividualPage extends StatelessWidget {
       required this.time,
       required this.image,
       required this.ingr,
+
       required this.step,
       required this.title})
       : super(key: key);
@@ -25,6 +26,11 @@ class IndividualPage extends StatelessWidget {
   List ingr;
   List step;
 
+  @override
+  State<IndividualPage> createState() => _IndividualPageState();
+}
+
+class _IndividualPageState extends State<IndividualPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +45,7 @@ class IndividualPage extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: NetworkImage(image), fit: BoxFit.cover),
+                      image: NetworkImage(widget.image), fit: BoxFit.cover),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -73,69 +79,17 @@ class IndividualPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     // by author and likes
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      width: MediaQuery.of(context).size.width,
-                      child: FutureBuilder(
-                          future: LocalStorage().readdata(),
-                          builder: (context1, snap) {
-                            return StreamBuilder(
-                              stream: FirebaseFirestore.instance
-                                  .collection('user')
-                                  .snapshots(),
-                              builder: (context,
-                                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                                if (snapshot.hasData) {
-                                  return ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: 1,
-                                      itemBuilder: (context, index) {
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              ' By  ' + name,
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  '8',
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20),
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Icon(
-                                                  Icons.favorite,
-                                                  color: Colors.red,
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        );
-                                      });
-                                } else {
-                                  return Text('no data found');
-                                }
-                              },
-                            );
-                          }),
+                    AuthorAndFavContainer(
+                      name: widget.name,
+                     
+                      title: widget.title,
                     ),
 
                     SizedBox(
                       height: 20,
                     ), //title
                     Text(
-                      title,
+                      widget.title,
                       textAlign: TextAlign.left,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
@@ -148,9 +102,9 @@ class IndividualPage extends StatelessWidget {
                       height: 15,
                     ),
                     Text(
-                      des,
+                      widget.des,
                       textAlign: TextAlign.left,
-                      maxLines: 8,
+                      maxLines: 20,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           color: Colors.grey,
@@ -170,7 +124,7 @@ class IndividualPage extends StatelessWidget {
                             fontSize: 18),
                         children: [
                           TextSpan(
-                            text: time,
+                            text: widget.time,
                             style: TextStyle(color: Colors.black),
                           ),
                         ],
@@ -196,10 +150,10 @@ class IndividualPage extends StatelessWidget {
                             child: ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
-                              itemCount: ingr.length,
+                              itemCount: widget.ingr.length,
                               itemBuilder: (context, index) {
                                 return IngredientsText(context,
-                                    text: ingr[index],
+                                    text: widget.ingr[index],
                                     index: '${index + 1} : ');
                               },
                             ),
@@ -227,10 +181,11 @@ class IndividualPage extends StatelessWidget {
                             child: ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
-                              itemCount: step.length,
+                              itemCount: widget.step.length,
                               itemBuilder: (context, index) {
                                 return StepsRow(
-                                    index: '${index + 1}', text: step[index]);
+                                    index: '${index + 1}',
+                                    text: widget.step[index]);
                               },
                             ),
                           )
@@ -300,14 +255,73 @@ class IndividualPage extends StatelessWidget {
         width: 5,
       ),
       SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8,
-        child: Text(
-          text,
-          maxLines: 3,
-          style: TextStyle(
-              color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 17),
+        width: MediaQuery.of(context).size.width * 0.75,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            text,
+            maxLines: 3,
+            style: TextStyle(
+                color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 17),
+          ),
         ),
       )
     ]);
+  }
+}
+
+class AuthorAndFavContainer extends StatefulWidget {
+  const AuthorAndFavContainer(
+      {Key? key,
+      required this.name,
+
+      required this.title})
+      : super(key: key);
+
+  final String name;
+
+  final String title;
+
+  @override
+  State<AuthorAndFavContainer> createState() => _AuthorAndFavContainerState();
+}
+
+class _AuthorAndFavContainerState extends State<AuthorAndFavContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.05,
+      width: MediaQuery.of(context).size.width,
+      child: FutureBuilder(
+          future: LocalStorage().readdata(),
+          builder: (context1, snap) {
+            return StreamBuilder(
+              stream: FirebaseFirestore.instance.collection('user').snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 1,
+                      itemBuilder: (context, index) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              ' By  ' + widget.name,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
+                            ),
+                          ],
+                        );
+                      });
+                } else {
+                  return Text('no data found');
+                }
+              },
+            );
+          }),
+    );
   }
 }

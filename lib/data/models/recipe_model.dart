@@ -7,13 +7,17 @@ class Recipes {
   String owner;
   String photourl;
   String title;
+  bool isfav;
+  int fav;
   String description;
   String cook_time;
   List<String> ingredient;
   List<String> steps;
   Recipes({
     required this.photourl,
+    this.isfav = false,
     required this.owner,
+    required this.fav,
     required this.title,
     required this.description,
     required this.cook_time,
@@ -23,9 +27,11 @@ class Recipes {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'owner': owner,
       'photourl': photourl,
       'title': title,
-      'owner': owner,
+      'isfav': isfav,
+      'fav': fav,
       'description': description,
       'cook_time': cook_time,
       'ingredient': ingredient,
@@ -35,9 +41,11 @@ class Recipes {
 
   factory Recipes.fromMap(Map<String, dynamic> map) {
     return Recipes(
-      photourl: map['photourl'] as String,
       owner: map['owner'] as String,
+      photourl: map['photourl'] as String,
       title: map['title'] as String,
+      isfav: map['isfav'] as bool,
+      fav: map['fav'] as int,
       description: map['description'] as String,
       cook_time: map['cook_time'] as String,
       ingredient: List<String>.from((map['ingredient'] as List<String>)),

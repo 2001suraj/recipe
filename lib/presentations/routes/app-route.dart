@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/presentations/pages/create_recipe_page.dart';
 import 'package:recipe_app/presentations/pages/discover_page.dart';
 import 'package:recipe_app/presentations/pages/edit_profile_page.dart';
+import 'package:recipe_app/presentations/pages/following_page.dart';
+import 'package:recipe_app/presentations/pages/other_user_profile.dart';
+import 'package:recipe_app/presentations/pages/popular_recipes_page.dart';
 import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
+import 'package:recipe_app/presentations/pages/today_recipe_page.dart';
+import 'package:recipe_app/presentations/pages/uploaded_recipe_page.dart';
 import 'package:recipe_app/presentations/screens/add_screen.dart';
 import 'package:recipe_app/presentations/screens/auth_screen.dart';
-import 'package:recipe_app/presentations/screens/fav_screen.dart';
 import 'package:recipe_app/presentations/screens/forget_password.dart';
 import 'package:recipe_app/presentations/screens/home_screen.dart';
 import 'package:recipe_app/presentations/screens/login_screen.dart';
@@ -15,6 +19,7 @@ import 'package:recipe_app/presentations/pages/onboarding_page.dart';
 import 'package:recipe_app/presentations/screens/main_screen.dart';
 import 'package:recipe_app/presentations/screens/profile_screen.dart';
 import 'package:recipe_app/presentations/screens/search_screen.dart';
+import 'package:recipe_app/presentations/screens/search_user_screen.dart';
 import 'package:recipe_app/presentations/screens/sigin_screen.dart';
 
 class AppRoute {
@@ -38,8 +43,30 @@ class AppRoute {
         return MaterialPageRoute(builder: (context) => SearchScreen());
       case AddScreen.routeName:
         return MaterialPageRoute(builder: (context) => AddScreen());
-      case FavScreen.routeName:
-        return MaterialPageRoute(builder: (context) => FavScreen());
+      case PopularRecipesPage.routeName:
+        return MaterialPageRoute(builder: (context) => PopularRecipesPage());
+      case TodayRecipePage.routeName:
+        return MaterialPageRoute(builder: (context) => TodayRecipePage());
+      case UploadedRecipePage.routeName:
+        return MaterialPageRoute(builder: (context) => UploadedRecipePage());
+      case SearchUserScreen.routeName:
+        return MaterialPageRoute(builder: (context) => SearchUserScreen());
+      case FollowingPage.routeName:
+        return MaterialPageRoute(builder: (context) => FollowingPage());
+      case OtherUserProfilePage.routeName:
+        return MaterialPageRoute(builder: (context) {
+          final OtherUserProfilePage? otherUserProfilePage =
+              routeSettings.arguments as OtherUserProfilePage;
+          return OtherUserProfilePage(
+            name: otherUserProfilePage!.name,
+            email: otherUserProfilePage.email,
+            image: otherUserProfilePage.image,
+            followers: otherUserProfilePage.followers,
+            following: otherUserProfilePage.following,
+            about: otherUserProfilePage.about,
+          );
+        });
+
       case ProfileScreen.routeName:
         return MaterialPageRoute(builder: (context) => ProfileScreen());
       case CreateRecipePage.routeName:
@@ -52,8 +79,7 @@ class AppRoute {
               routeSettings.arguments as IndividualPage?;
           return IndividualPage(
               des: individual!.des,
-            name: individual.name,
-
+              name: individual.name,
               time: individual.time,
               image: individual.image,
               ingr: individual.ingr,

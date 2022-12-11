@@ -2,19 +2,19 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class UserModel {
-  final String? userName;
+  final String? name;
   final String? email;
-  final String? photoUrl;
-  final String? bio;
+  final String? image;
+  final String? about;
   final String? lastMessage;
   final DateTime? messageSent;
   final List? followers;
   final List? following;
   UserModel({
-    this.userName,
+    this.name,
     this.email,
-    this.photoUrl,
-    this.bio,
+    this.image,
+    this.about,
     this.lastMessage,
     this.messageSent,
     this.followers,
@@ -23,10 +23,10 @@ class UserModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'userName': userName,
+      'name': name,
       'email': email,
-      'photoUrl': photoUrl,
-      'bio': bio,
+      'image': image,
+      'about': about,
       'lastMessage': lastMessage,
       'messageSent': messageSent?.millisecondsSinceEpoch,
       'followers': followers,
@@ -36,10 +36,10 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      userName: map['userName'] as String,
+      name: map['name'] as String,
       email: map['email'] as String,
-      photoUrl: map['photoUrl'] as String,
-      bio: map['bio'] as String,
+      image: map['image'] as String,
+      about: map['about'] as String,
       lastMessage: map['lastMessage'] as String,
       messageSent: map['messageSent'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['messageSent'] as int)

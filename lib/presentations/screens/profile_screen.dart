@@ -5,12 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_app/business_logic/logout/logout_bloc.dart';
 import 'package:recipe_app/data/local/local_storage.dart';
-import 'package:recipe_app/data/repo/cloud_storage.dart';
 import 'package:recipe_app/data/repo/recipe_repo.dart';
 import 'package:recipe_app/presentations/pages/edit_profile_page.dart';
+import 'package:recipe_app/presentations/pages/following_page.dart';
 import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
+import 'package:recipe_app/presentations/pages/uploaded_recipe_page.dart';
 import 'package:recipe_app/presentations/screens/login_screen.dart';
 import 'package:recipe_app/presentations/screens/main_screen.dart';
+import 'package:recipe_app/presentations/widgets/custom_future_builder.dart';
+import 'package:recipe_app/presentations/widgets/custom_row.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const String routeName = 'ProfileScreen';
@@ -24,7 +27,7 @@ class ProfileScreen extends StatelessWidget {
           child: SingleChildScrollView(
             primary: true,
             child: Container(
-              height: MediaQuery.of(context).size.height * 1.2,
+              height: MediaQuery.of(context).size.height * 1.3,
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
@@ -309,45 +312,58 @@ class ProfileScreen extends StatelessWidget {
                                                 future:
                                                     LocalStorage().readdata(),
                                                 builder: (context1, snap) {
-                                                  return StreamBuilder(
-                                                    stream: FirebaseFirestore
-                                                        .instance
-                                                        .collection('user')
-                                                        .doc(snap.data
-                                                            .toString())
-                                                        .collection('recipes')
-                                                        .snapshots(),
-                                                    builder: (context,
-                                                        AsyncSnapshot<
-                                                                QuerySnapshot>
-                                                            snapshot) {
-                                                      if (snapshot.hasData) {
-                                                        return Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceEvenly,
-                                                          children: [
-                                                            Spacer(),
-                                                            tText(
-                                                                text: snapshot
-                                                                    .data!
-                                                                    .docs
-                                                                    .length
-                                                                    .toString()),
-                                                            Spacer(),
-                                                            Spacer(),
-                                                            tText(text: '0'),
-                                                            Spacer(),
-                                                            Spacer(),
-                                                            tText(text: '0'),
-                                                            Spacer(),
-                                                          ],
-                                                        );
-                                                      } else {
-                                                        return Text(
-                                                            'no data found');
-                                                      }
-                                                    },
+                                                  return Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    children: [
+                                                      Spacer(),
+                                                      CustomFutureBuilder(
+                                                        stream:
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'user')
+                                                                .doc(snap.data
+                                                                    .toString())
+                                                                .collection(
+                                                                    'recipes')
+                                                                .snapshots(),
+                                                      ),
+                                                      Spacer(),
+                                                      Spacer(),
+                                                      Text('0'),
+                                                      // CustomFutureBuilder(
+                                                      //   stream: FirebaseFirestore.instance
+                                                      //       .collection('user')
+                                                      //       .doc(snap.data.toString())
+                                                      //       .collection('following')
+                                                      //       .snapshots(),
+                                                      // ),
+                                                      Spacer(),
+                                                      Spacer(),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.pushNamed(
+                                                              context,
+                                                              FollowingPage
+                                                                  .routeName);
+                                                        },
+                                                        child:
+                                                            CustomFutureBuilder(
+                                                          stream: FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'user')
+                                                              .doc(snap.data
+                                                                  .toString())
+                                                              .collection(
+                                                                  'following')
+                                                              .snapshots(),
+                                                        ),
+                                                      ),
+                                                      Spacer(),
+                                                    ],
                                                   );
                                                 }),
                                           ],
@@ -368,6 +384,20 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   Positioned(
                     top: 650,
+                    right: 0,
+                    left: 0,
+                    child: CustomRow(
+                      text1: 'Uploaded Recipe',
+                      text2: 'View All',
+                      tap: () {
+                        Navigator.pushNamed(
+                            context, UploadedRecipePage.routeName);
+                      },
+                      color: Colors.white,
+                    ),
+                  ),
+                  Positioned(
+                    top: 730,
                     left: 0,
                     right: 0,
                     child: Container(
@@ -404,7 +434,7 @@ class ProfileScreen extends StatelessWidget {
                                                 des: snapshot.data!.docs[index]
                                                     ['description'],
                                                 name: snapshot.data!.docs[index]
-                                                    ['name'],
+                                                    ['owner'],
                                                 time: snapshot.data!.docs[index]
                                                     ['cook_time'],
                                                 image: snapshot.data!
@@ -546,17 +576,17 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
+}
 
-  Text tText({required String text}) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        fontSize: 15,
-      ),
-    );
-  }
+Text tText({required String text}) {
+  return Text(
+    text,
+    style: TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+      fontSize: 15,
+    ),
+  );
 }
 
 

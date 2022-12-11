@@ -1,13 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, sized_box_for_whitespace
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_app/data/local/local_storage.dart';
+import 'package:recipe_app/presentations/pages/popular_recipes_page.dart';
 import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
-import 'package:recipe_app/presentations/screens/main_screen.dart';
-import 'package:recipe_app/presentations/screens/profile_screen.dart';
+import 'package:recipe_app/presentations/pages/today_recipe_page.dart';
+import 'package:recipe_app/presentations/widgets/custom_row.dart';
 import 'package:recipe_app/presentations/widgets/dot_indicator.dart';
 
 class DiscoverPage extends StatefulWidget {
@@ -24,7 +22,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _customAppBar(context),
       body: SingleChildScrollView(
         primary: true,
         child: Container(
@@ -38,6 +35,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
               CustomRow(
                 text1: 'Today Recipes',
                 text2: 'View All',
+                tap: () {
+                  Navigator.pushNamed(context, TodayRecipePage.routeName);
+                },
               ),
 
               //. image contianer
@@ -72,6 +72,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                           name: snapshot.data!.docs[index]
                                               ['owner'],
                                           // name: 'ram',
+
                                           des: snapshot.data!.docs[index]
                                               ['description'],
                                           time: snapshot.data!.docs[index]
@@ -122,34 +123,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                             width: 180,
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                  MainAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  width: 50,
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons
-                                                          .favorite_border),
-                                                      Text(
-                                                        '121',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Colors.black),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 100,
+                                                  width: 150,
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.end,
+                                                        MainAxisAlignment.start,
                                                     children: [
                                                       Icon(
                                                           Icons.timer_outlined),
@@ -207,6 +187,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
               CustomRow(
                 text1: 'Category',
                 text2: 'View All',
+                tap: () {},
               ),
               //contianer
               Container(
@@ -237,6 +218,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
               CustomRow(
                 text1: 'Popular Recipes',
                 text2: 'View All',
+                tap: () {
+                  Navigator.pushNamed(context, PopularRecipesPage.routeName);
+                },
               ),
               Container(
                 height: MediaQuery.of(context).size.height * 0.5,
@@ -317,34 +301,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                             width: 180,
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                  MainAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  width: 50,
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons
-                                                          .favorite_border),
-                                                      Text(
-                                                        '121',
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Colors.black),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 100,
+                                                  width: 160,
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.end,
+                                                        MainAxisAlignment.start,
                                                     children: [
                                                       Icon(
                                                           Icons.timer_outlined),
@@ -454,116 +417,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
       ],
     );
   }
-
-  AppBar _customAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.black,
-      leading: IconButton(
-        onPressed: () {
-          Navigator.pushReplacementNamed(context, MainScreen.routeName);
-        },
-        icon: Icon(Icons.arrow_back_ios_new_outlined),
-      ),
-      actions: [
-        SizedBox(
-          width: 10,
-        ),
-        Icon(
-          Icons.people,
-          color: Colors.white,
-        ),
-        SizedBox(
-          width: 20,
-        ),
-        InkWell(
-          onTap: () {
-            Navigator.pushNamed(context, ProfileScreen.routeName);
-          },
-          child: Padding(
-            padding: const EdgeInsets.only(top: 14.0, right: 10),
-            child: SizedBox(
-              height: 30,
-              width: 30,
-              child: FutureBuilder(
-                  future: LocalStorage().readdata(),
-                  builder: (context1, snap) {
-                    return StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('user')
-                          .snapshots(),
-                      builder:
-                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                              itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (context, index) {
-                                return snap.data.toString() ==
-                                        snapshot.data!.docs[index]['email']
-                                    ? snapshot.data!.docs[index]['image'] ==
-                                            'null'
-                                        ? CircleAvatar(
-                                            radius: 15,
-                                            backgroundImage: AssetImage(
-                                                'assets/images/user1.png'),
-                                          )
-                                        : CircleAvatar(
-                                            radius: 15,
-                                            backgroundImage: NetworkImage(
-                                              snapshot.data!.docs[index]
-                                                  ['image'],
-                                            ),
-                                          )
-                                    : SizedBox();
-                              });
-                        } else {
-                          return FittedBox(child: Text('no data founnd'));
-                        }
-                      },
-                    );
-                  }),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 10,
-        ),
-      ],
-    );
-  }
 }
 
-class CustomRow extends StatelessWidget {
-  CustomRow({Key? key, required this.text1, required this.text2})
-      : super(key: key);
-  final String text1;
-  final String text2;
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            text1,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 30,
-              color: Colors.black,
-            ),
-          ),
-          TextButton(
-              onPressed: () {},
-              child: Text(
-                text2,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                    fontSize: 25),
-              )),
-        ],
-      ),
-    );
-  }
-}

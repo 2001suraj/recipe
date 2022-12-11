@@ -79,7 +79,14 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                                   snapshot1.data) {
                                 return InkWell(
                                   onTap: () {
+                                    showsnackBar(
+                                        context: context,
+                                        text: ' recipe photo is required',
+                                        color: Colors.red);
+                                    var pp = File(image!.path);
+
                                     var rec = Recipes(
+                                      fav: 0,
                                         owner: snapshot
                                             .data!.docs[index]['name']
                                             .toString(),
@@ -92,21 +99,142 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                                         steps:
                                             step.map((e) => e.text).toList());
 
-                                    var pp = File(image!.path);
-                                    RecipeRepo().addRecipes(
-                                      email: snapshot1.data.toString(),
-                                      recipes: rec,
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: const Text(
+                                            " Where do you want to publish your recipe ?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              RecipeRepo().popularRecipes(
+                                                recipes: rec,
+                                              );
+                                              CloudStorages()
+                                                  .popularrecipephoto(
+                                                      photo: pp,
+                                                      title: title.text,
+                                                      email: snapshot1.data
+                                                          .toString());
+                                              showsnackBar(
+                                                  context: context,
+                                                  text:
+                                                      'Added new recipe in profile',
+                                                  color: Colors.green);
+                                              Navigator.pushReplacementNamed(
+                                                  context,
+                                                  MainScreen.routeName);
+                                            },
+                                            child: Container(
+                                              width: 120,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                color: Colors.blue,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              // padding: const EdgeInsets.all(14),
+                                              child: Center(
+                                                child: const Text(
+                                                  "Today",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              RecipeRepo().popularRecipes(
+                                                // email: snapshot1.data.toString(),
+                                                recipes: rec,
+                                              );
+                                              CloudStorages()
+                                                  .popularrecipephoto(
+                                                      photo: pp,
+                                                      title: title.text,
+                                                      email: snapshot1.data
+                                                          .toString());
+                                              showsnackBar(
+                                                  context: context,
+                                                  text:
+                                                      'Added new recipe in popular recipe',
+                                                  color: Colors.green);
+                                              Navigator.pushReplacementNamed(
+                                                  context,
+                                                  MainScreen.routeName);
+                                            },
+                                            child: Container(
+                                              width: 120,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                color: Colors.red,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              // padding: const EdgeInsets.all(14),
+                                              child: Center(
+                                                child: const Text(
+                                                  "Popular",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              RecipeRepo().addRecipes(
+                                                email:
+                                                    snapshot1.data.toString(),
+                                                recipes: rec,
+                                              );
+                                              CloudStorages().addrecipephoto(
+                                                  photo: pp,
+                                                  title: title.text,
+                                                  email: snapshot1.data
+                                                      .toString());
+                                              showsnackBar(
+                                                  context: context,
+                                                  text:
+                                                      'Added new recipe in popular recipe',
+                                                  color: Colors.green);
+                                              Navigator.pushReplacementNamed(
+                                                  context,
+                                                  MainScreen.routeName);
+                                            },
+                                            child: Container(
+                                              width: 120,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                color: Colors.green,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              // padding: const EdgeInsets.all(14),
+                                              child: Center(
+                                                child: const Text(
+                                                  "Normal",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text('cancel'))
+                                        ],
+                                      ),
                                     );
-                                    CloudStorages().addrecipephoto(
-                                        photo: pp,
-                                        title: title.text,
-                                        email: snapshot1.data.toString());
-                                    showsnackBar(
-                                        context: context,
-                                        text: 'added new recipe',
-                                        color: Colors.green);
-                                    Navigator.pushReplacementNamed(
-                                        context, MainScreen.routeName);
                                   },
                                   child: Container(
                                     height: 30,

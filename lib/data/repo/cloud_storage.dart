@@ -11,10 +11,19 @@ class CloudStorages {
     required String name,
     required String email,
     required String about,
+    required List followers,
+
+    required List following
   }) async {
     var user = await storage.collection('user').doc(email);
-    await user
-        .set({'name': name, 'email': email, 'about': about, 'image': 'null'});
+    await user.set({
+      'name': name,
+      'email': email,
+      'about': about,
+      'image': 'null',
+      'followers': followers,
+      'following': following,
+    });
   }
 
   Future userinfo_update({
@@ -76,57 +85,56 @@ class CloudStorages {
 
 //today
 
-  // Future addrecipephoto({
-  //   required File photo,
-  //   required String title,
-  //   required String email,
-  // }) async {
-  //   try {
-  //     UploadTask? uploadTask;
-  //     var ref = FirebaseStorage.instance
-  //         .ref()
-  //         .child('today_recipe_photo')
-  //         .child(title);
-  //     ref.putFile(photo);
-  //     uploadTask = ref.putFile(photo);
-  //     final snap = await uploadTask.whenComplete(() {});
-  //     final urls = await snap.ref.getDownloadURL();
-  //     var user = await storage
-  //         .collection('today_recipe')
-  //         // .doc(email)
-  //         // .collection('recipes')
-  //         .doc(title);
-  //     await user.update({'photourl': urls});
-  //   } catch (e) {
-  //     throw Exception(e.toString());
-  //   }
-  // }
-
+  Future todayrecipephoto({
+    required File photo,
+    required String title,
+    required String email,
+  }) async {
+    try {
+      UploadTask? uploadTask;
+      var ref = FirebaseStorage.instance
+          .ref()
+          .child('today_recipe_photo')
+          .child(title);
+      ref.putFile(photo);
+      uploadTask = ref.putFile(photo);
+      final snap = await uploadTask.whenComplete(() {});
+      final urls = await snap.ref.getDownloadURL();
+      var user = await storage
+          .collection('today_recipe')
+          // .doc(email)
+          // .collection('recipes')
+          .doc(title);
+      await user.update({'photourl': urls});
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 
   //popular
-  // Future addrecipephoto({
-  //   required File photo,
-  //   required String title,
-  //   required String email,
-  // }) async {
-  //   try {
-  //     UploadTask? uploadTask;
-  //     var ref = FirebaseStorage.instance
-  //         .ref()
-  //         .child('popular_recipe_photo')
-  //         .child(title);
-  //     ref.putFile(photo);
-  //     uploadTask = ref.putFile(photo);
-  //     final snap = await uploadTask.whenComplete(() {});
-  //     final urls = await snap.ref.getDownloadURL();
-  //     var user = await storage
-  //         .collection('popular_recipe')
-  //         // .doc(email)
-  //         // .collection('recipes')
-  //         .doc(title);
-  //     await user.update({'photourl': urls});
-  //   } catch (e) {
-  //     throw Exception(e.toString());
-  //   }
-  // }
+  Future popularrecipephoto({
+    required File photo,
+    required String title,
+    required String email,
+  }) async {
+    try {
+      UploadTask? uploadTask;
+      var ref = FirebaseStorage.instance
+          .ref()
+          .child('popular_recipe_photo')
+          .child(title);
+      ref.putFile(photo);
+      uploadTask = ref.putFile(photo);
+      final snap = await uploadTask.whenComplete(() {});
+      final urls = await snap.ref.getDownloadURL();
+      var user = await storage
+          .collection('popular_recipe')
+          // .doc(email)
+          // .collection('recipes')
+          .doc(title);
+      await user.update({'photourl': urls});
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }
