@@ -5,7 +5,7 @@ import 'package:recipe_app/presentations/pages/following_page.dart';
 import 'package:recipe_app/presentations/screens/profile_screen.dart';
 import 'package:recipe_app/presentations/widgets/custom_future_builder.dart';
 
-class OtherUserProfilePage extends StatelessWidget {
+class OtherUserProfilePage extends StatefulWidget {
   static const String routeName = 'other user profile page';
   OtherUserProfilePage(
       {Key? key,
@@ -20,6 +20,13 @@ class OtherUserProfilePage extends StatelessWidget {
   final String image;
   final String about;
   final List following;
+
+  @override
+  State<OtherUserProfilePage> createState() => _OtherUserProfilePageState();
+}
+
+class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
+  bool isfollow = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +59,10 @@ class OtherUserProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              image.toString() != 'null'
+              widget.image.toString() != 'null'
                   ? CircleAvatar(
                       radius: 90,
-                      backgroundImage: NetworkImage(image),
+                      backgroundImage: NetworkImage(widget.image),
                     )
                   : CircleAvatar(
                       radius: 90,
@@ -71,7 +78,7 @@ class OtherUserProfilePage extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      name,
+                      widget.name,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                     ),
@@ -81,7 +88,7 @@ class OtherUserProfilePage extends StatelessWidget {
                           EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                       child: Center(
                         child: Text(
-                          about,
+                          widget.about,
                           maxLines: 5,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -98,32 +105,36 @@ class OtherUserProfilePage extends StatelessWidget {
                                   .collection('user')
                                   .doc(snapshot.data.toString())
                                   .collection('following')
-                                  .doc(email);
+                                  .doc(widget.email);
                               await user.set({
-                                'name': name,
-                                'following': email,
-                                'image': image
+                                'name': widget.name,
+                                'following': widget.email,
+                                'image': widget.image
                               });
-                              print('follow');
+                              setState(() {
+                                isfollow = true;
+                              });
                             },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 60, vertical: 10),
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              width: MediaQuery.of(context).size.width,
-                              child: Center(
-                                child: Text(
-                                  'Follow  + ',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
+                            child: isfollow == false
+                                ? Container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 60, vertical: 10),
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Center(
+                                      child: Text(
+                                        'Follow  + ',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(),
                           );
                         }),
                     Container(
@@ -151,7 +162,7 @@ class OtherUserProfilePage extends StatelessWidget {
                               CustomFutureBuilder(
                                 stream: FirebaseFirestore.instance
                                     .collection('user')
-                                    .doc(email)
+                                    .doc(widget.email)
                                     .collection('recipes')
                                     .snapshots(),
                               ),
@@ -166,7 +177,7 @@ class OtherUserProfilePage extends StatelessWidget {
                                     return StreamBuilder(
                                       stream: FirebaseFirestore.instance
                                           .collection('user')
-                                          .doc(email)
+                                          .doc(widget.email)
                                           .collection('following')
                                           .snapshots(),
                                       builder: (context,
@@ -179,7 +190,7 @@ class OtherUserProfilePage extends StatelessWidget {
                                                     FollowingPage.routeName,
                                                     arguments: FollowingPage(
                                                       unfollow: false,
-                                                      email: email,
+                                                      email: widget.email,
                                                     ));
                                               },
                                               child: tText(

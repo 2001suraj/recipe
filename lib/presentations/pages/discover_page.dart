@@ -18,6 +18,18 @@ class DiscoverPage extends StatefulWidget {
 
 class _DiscoverPageState extends State<DiscoverPage> {
   int pageindex = 0;
+  List<String> menu_image = [
+    'assets/images/breakfast.png',
+    'assets/images/lunch.png',
+    'assets/images/main.png',
+    'assets/images/dinner.png',
+  ];
+  List<String> menu_name = [
+    'Breakfast Recipes',
+    'lunch Recipes',
+    'Main course Recipes',
+    'Dinner Recipes',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -184,10 +196,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
               //category and view all
 
-          
               CustomRow(
                 text1: 'Category',
-                text2: 'View All',
+                text2: '',
                 tap: () {},
               ),
               //contianer
@@ -208,7 +219,31 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           borderRadius: BorderRadius.circular(16),
                           color: Colors.black54,
                         ),
-                        child: Center(child: Icon(Icons.settings)),
+                        child: Center(
+                            child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 70,
+                              width: 90,
+                              decoration: BoxDecoration(
+                                // borderRadius: BorderRadius.circular(20),
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                      menu_image[index],
+                                    ),
+                                    fit: BoxFit.cover),
+                              ),
+                            ),
+                            Text(
+                              menu_name[index],
+                              maxLines: 2,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                          ],
+                        )),
                       ),
                     );
                   },
