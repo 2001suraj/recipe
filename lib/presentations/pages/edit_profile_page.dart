@@ -173,10 +173,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 onPressed: () {
                   var ii = File(image!.path);
                   CloudStorages().userinfo_update(
-                    email: widget.email,
-                    name: name.text,
-                    about: about.text,
-                  );
+                      email: widget.email,
+                      name: name.text,
+                      about: about.text,
+                      key: [
+                        for (int i = 0; i <= name.text.length; i++)
+                          name.text.substring(0, i),
+                      ]);
                   image == null
                       ? SizedBox()
                       : CloudStorages().profilesetup(

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/presentations/screens/add_screen.dart';
 import 'package:recipe_app/presentations/screens/home_screen.dart';
 import 'package:recipe_app/presentations/screens/profile_screen.dart';
-import 'package:recipe_app/presentations/screens/search_screen.dart';
+import 'package:recipe_app/presentations/screens/search_recipe_screen.dart';
 
 class MainScreen extends StatefulWidget {
   static const String routeName = 'home screen';
@@ -18,7 +18,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   List<Widget> pages = [
     HomeScreen(),
-    SearchScreen(),
+    SearchRecipeScreen(),
     AddScreen(),
     ProfileScreen(),
   ];
@@ -28,9 +28,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    
       body: pages[index],
-    
       bottomNavigationBar: ConvexAppBar(
           initialActiveIndex: index,
           onTap: (value) {

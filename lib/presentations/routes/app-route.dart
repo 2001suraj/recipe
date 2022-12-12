@@ -18,7 +18,7 @@ import 'package:recipe_app/presentations/screens/login_screen.dart';
 import 'package:recipe_app/presentations/pages/onboarding_page.dart';
 import 'package:recipe_app/presentations/screens/main_screen.dart';
 import 'package:recipe_app/presentations/screens/profile_screen.dart';
-import 'package:recipe_app/presentations/screens/search_screen.dart';
+import 'package:recipe_app/presentations/screens/search_recipe_screen.dart';
 import 'package:recipe_app/presentations/screens/search_user_screen.dart';
 import 'package:recipe_app/presentations/screens/sigin_screen.dart';
 
@@ -39,8 +39,7 @@ class AppRoute {
         return MaterialPageRoute(builder: (context) => ForgetpasswordScreen());
       case HomeScreen.routeName:
         return MaterialPageRoute(builder: (context) => HomeScreen());
-      case SearchScreen.routeName:
-        return MaterialPageRoute(builder: (context) => SearchScreen());
+
       case AddScreen.routeName:
         return MaterialPageRoute(builder: (context) => AddScreen());
       case PopularRecipesPage.routeName:
@@ -53,6 +52,8 @@ class AppRoute {
         return MaterialPageRoute(builder: (context) => SearchUserScreen());
       case FollowingPage.routeName:
         return MaterialPageRoute(builder: (context) => FollowingPage());
+      case SearchRecipeScreen.routeName:
+        return MaterialPageRoute(builder: (context) => SearchRecipeScreen());
       case OtherUserProfilePage.routeName:
         return MaterialPageRoute(builder: (context) {
           final OtherUserProfilePage? otherUserProfilePage =

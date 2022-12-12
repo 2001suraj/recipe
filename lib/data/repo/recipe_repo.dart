@@ -12,6 +12,7 @@ class RecipeRepo {
         .collection('recipes')
         .doc(recipes.title);
     var items = await item.set(Recipes(
+      key: recipes.key,
             owner: recipes.owner,
             fav: recipes.fav,
             photourl: recipes.photourl,
@@ -36,6 +37,7 @@ class RecipeRepo {
     await item.set(
       Recipes(
               fav: recipes.fav,
+              key: recipes.key,
               owner: recipes.owner,
               photourl: recipes.photourl,
               title: recipes.title,
@@ -58,6 +60,7 @@ class RecipeRepo {
         .doc(recipes.title);
     await item.set(
       Recipes(
+        key: recipes.key,
               owner: recipes.owner,
               photourl: recipes.photourl,
               title: recipes.title,

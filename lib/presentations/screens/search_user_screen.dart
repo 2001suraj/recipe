@@ -5,10 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/data/local/local_storage.dart';
 import 'package:recipe_app/presentations/pages/other_user_profile.dart';
 
-class SearchUserScreen extends StatelessWidget {
+class SearchUserScreen extends StatefulWidget {
   static const String routeName = 'search user screen';
   const SearchUserScreen({Key? key}) : super(key: key);
 
+  @override
+  State<SearchUserScreen> createState() => _SearchUserScreenState();
+}
+
+class _SearchUserScreenState extends State<SearchUserScreen> {
+  String nam = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +37,11 @@ class SearchUserScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
+              onChanged: (value) {
+                setState(() {
+                  nam = value;
+                });
+              },
             ),
           ),
         ),
@@ -58,9 +69,14 @@ class SearchUserScreen extends StatelessWidget {
                       future: LocalStorage().readdata(),
                       builder: (context1, snap) {
                         return StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('user')
-                              .snapshots(),
+                          stream: (nam != '' && nam != null)
+                              ? FirebaseFirestore.instance
+                                  .collection('user')
+                                  .where('key', arrayContains: nam)
+                                  .snapshots()
+                              : FirebaseFirestore.instance
+                                  .collection('user')
+                                  .snapshots(),
                           builder:
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {

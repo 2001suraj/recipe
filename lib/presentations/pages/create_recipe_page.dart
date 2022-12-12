@@ -86,6 +86,11 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                                     var pp = File(image!.path);
 
                                     var rec = Recipes(
+                                        key: [
+                            for (int i = 0; i <= title.text.length; i++)
+                              title.text.substring(0, i).toLowerCase(),
+                         
+                          ],
                                       fav: 0,
                                         owner: snapshot
                                             .data!.docs[index]['name']

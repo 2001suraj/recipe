@@ -7,21 +7,19 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class CloudStorages {
   FirebaseFirestore storage = FirebaseFirestore.instance;
-  Future userinfo({
-    required String name,
-    required String email,
-    required String about,
-    required List followers,
-
-    required List following
-  }) async {
+  Future userinfo(
+      {required String name,
+      required String email,
+      required String about,
+      required List<String> key,
+      required List following}) async {
     var user = await storage.collection('user').doc(email);
     await user.set({
       'name': name,
       'email': email,
       'about': about,
       'image': 'null',
-      'followers': followers,
+      'key': key,
       'following': following,
     });
   }
@@ -30,11 +28,13 @@ class CloudStorages {
     required String name,
     required String email,
     required String about,
+    required List<String> key,
   }) async {
     var user = await storage.collection('user').doc(email);
     await user.update({
       'name': name,
       'about': about,
+      'key':key
     });
   }
 

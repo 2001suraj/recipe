@@ -39,7 +39,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   Navigator.pushNamed(context, TodayRecipePage.routeName);
                 },
               ),
-
               //. image contianer
               Container(
                 height: MediaQuery.of(context).size.height * 0.35,
@@ -184,6 +183,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
               ),
 
               //category and view all
+
+          
               CustomRow(
                 text1: 'Category',
                 text2: 'View All',
@@ -280,7 +281,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                                     .docs[index]['photourl']),
                                                 fit: BoxFit.cover),
                                           ),
-                                          height: 150,
+                                          height: 130,
                                         ),
                                         Positioned(
                                           bottom: 0,
@@ -298,13 +299,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                                 color: Colors.white
                                                     .withOpacity(0.6)),
                                             height: 30,
-                                            width: 180,
+                                            width: 145,
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  width: 160,
+                                                  width: 145,
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
@@ -418,5 +419,3 @@ class _DiscoverPageState extends State<DiscoverPage> {
     );
   }
 }
-
-

@@ -13,11 +13,13 @@ class Recipes {
   String cook_time;
   List<String> ingredient;
   List<String> steps;
+  List<String> key;
   Recipes({
     required this.photourl,
     this.isfav = false,
     required this.owner,
     required this.fav,
+    required this.key,
     required this.title,
     required this.description,
     required this.cook_time,
@@ -32,6 +34,7 @@ class Recipes {
       'title': title,
       'isfav': isfav,
       'fav': fav,
+      'key': key,
       'description': description,
       'cook_time': cook_time,
       'ingredient': ingredient,
@@ -49,6 +52,7 @@ class Recipes {
       description: map['description'] as String,
       cook_time: map['cook_time'] as String,
       ingredient: List<String>.from((map['ingredient'] as List<String>)),
+      key: List<String>.from((map['key'] as List<String>)),
       steps: List<String>.from((map['steps'] as List<String>)),
     );
   }

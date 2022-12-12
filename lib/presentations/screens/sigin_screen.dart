@@ -107,8 +107,14 @@ class SignInScreen extends StatelessWidget {
                           email: email.text, password: password.text));
                       LocalStorage().writedata(name: email.text);
                       CloudStorages().userinfo(
-                          name: name.text, email: email.text, about: '',
-                          followers: [],following: []);
+                          name: name.text,
+                          email: email.text,
+                          about: '',
+                          key: [
+                            for (int i = 0; i <= name.text.length; i++)
+                              name.text.substring(0, i).toLowerCase(),
+                          ],
+                          following: []);
                     } else {
                       showsnackBar(
                           context: context,
