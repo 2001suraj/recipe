@@ -90,7 +90,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                                           context,
                                           OtherUserProfilePage.routeName,
                                           arguments: OtherUserProfilePage(
-                                            followers: ['followers'],
                                             following: data['following'],
                                             about: data['about'],
                                             email: data['email'],

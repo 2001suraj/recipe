@@ -51,7 +51,14 @@ class AppRoute {
       case SearchUserScreen.routeName:
         return MaterialPageRoute(builder: (context) => SearchUserScreen());
       case FollowingPage.routeName:
-        return MaterialPageRoute(builder: (context) => FollowingPage());
+        return MaterialPageRoute(builder: (context) {
+          FollowingPage? followingPage =
+              routeSettings.arguments as FollowingPage;
+          return FollowingPage(
+            email: followingPage.email,
+            unfollow: followingPage.unfollow,
+          );
+        });
       case SearchRecipeScreen.routeName:
         return MaterialPageRoute(builder: (context) => SearchRecipeScreen());
       case OtherUserProfilePage.routeName:
@@ -62,7 +69,6 @@ class AppRoute {
             name: otherUserProfilePage!.name,
             email: otherUserProfilePage.email,
             image: otherUserProfilePage.image,
-            followers: otherUserProfilePage.followers,
             following: otherUserProfilePage.following,
             about: otherUserProfilePage.about,
           );

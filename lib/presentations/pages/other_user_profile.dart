@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/data/local/local_storage.dart';
+import 'package:recipe_app/presentations/pages/following_page.dart';
 import 'package:recipe_app/presentations/screens/profile_screen.dart';
 import 'package:recipe_app/presentations/widgets/custom_future_builder.dart';
 
@@ -11,7 +12,6 @@ class OtherUserProfilePage extends StatelessWidget {
       required this.email,
       required this.image,
       required this.name,
-      required this.followers,
       required this.following,
       required this.about})
       : super(key: key);
@@ -19,7 +19,6 @@ class OtherUserProfilePage extends StatelessWidget {
   final String email;
   final String image;
   final String about;
-  final List followers;
   final List following;
 
   @override
@@ -100,7 +99,11 @@ class OtherUserProfilePage extends StatelessWidget {
                                   .doc(snapshot.data.toString())
                                   .collection('following')
                                   .doc(email);
-                              await user.set({'following': email});
+                              await user.set({
+                                'name': name,
+                                'following': email,
+                                'image': image
+                              });
                               print('follow');
                             },
                             child: Container(
@@ -132,8 +135,7 @@ class OtherUserProfilePage extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              tText(text: 'Recipes'),
-                              tText(text: 'Followers'),
+                              tText(text: 'Recipe'),
                               tText(text: 'Following'),
                             ],
                           ),
@@ -144,6 +146,8 @@ class OtherUserProfilePage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Spacer(),
+                              Spacer(),
+//recipe
                               CustomFutureBuilder(
                                 stream: FirebaseFirestore.instance
                                     .collection('user')
@@ -153,67 +157,42 @@ class OtherUserProfilePage extends StatelessWidget {
                               ),
                               Spacer(),
                               Spacer(),
-                              Text('0'),
+                              Spacer(),
 
-                              // FutureBuilder(
-                              //     future: LocalStorage().readdata(),
-                              //     builder: (context1, snap) {
-                              //       return StreamBuilder(
-                              //         stream: FirebaseFirestore.instance
-                              //             .collection('user')
-                              //             .doc(email)
-                              //             .collection('following')
-                              //             .snapshots(),
-                              //         builder: (context,
-                              //             AsyncSnapshot<QuerySnapshot>
-                              //                 snapshot) {
-                              //           if (snapshot.hasData) {
-                              //             return Column(
-                              //               children: [
-                              //                 SizedBox(
-                              //                   width: 60,
-                              //                   height: 120,
-                              //                   child: ListView.builder(
-                              //                     itemCount: snapshot
-                              //                         .data!.docs.length,
-                              //                     itemBuilder:
-                              //                         (context, index) {
-                              //                       var data = snapshot
-                              //                           .data!.docs[index];
-                              //                       return Text(
-                              //                         data['following'],
-                              //                       );
-                              //                     },
-                              //                   ),
-                              //                 ),
-                              //                 tText(
-                              //                     text: snapshot
-                              //                         .data!.docs.length
-                              //                         .toString()),
-                              //               ],
-                              //             );
-                              //           } else {
-                              //             return Text('no data found');
-                              //           }
-                              //         },
-                              //       );
-                              //     }),
-                              // CustomFutureBuilder(
-                              //   stream: FirebaseFirestore.instance
-                              //       .collection('user')
-                              //       .doc(email)
-                              //       .collection('following')
-                              //       .snapshots(),
-                              // ),
+                              //following
+                              FutureBuilder(
+                                  future: LocalStorage().readdata(),
+                                  builder: (context1, snap) {
+                                    return StreamBuilder(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('user')
+                                          .doc(email)
+                                          .collection('following')
+                                          .snapshots(),
+                                      builder: (context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (snapshot.hasData) {
+                                          return InkWell(
+                                              onTap: () {
+                                                Navigator.pushNamed(context,
+                                                    FollowingPage.routeName,
+                                                    arguments: FollowingPage(
+                                                      unfollow: false,
+                                                      email: email,
+                                                    ));
+                                              },
+                                              child: tText(
+                                                  text: snapshot
+                                                      .data!.docs.length
+                                                      .toString()));
+                                        } else {
+                                          return Text('no data found');
+                                        }
+                                      },
+                                    );
+                                  }),
                               Spacer(),
-                              Spacer(),
-                              CustomFutureBuilder(
-                                stream: FirebaseFirestore.instance
-                                    .collection('user')
-                                    .doc(email)
-                                    .collection('following')
-                                    .snapshots(),
-                              ),
                               Spacer(),
                             ],
                           ),

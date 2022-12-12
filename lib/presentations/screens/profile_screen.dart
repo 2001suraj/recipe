@@ -301,7 +301,6 @@ class ProfileScreen extends StatelessWidget {
                                                   MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 tText(text: 'Recipes'),
-                                                tText(text: 'Followers'),
                                                 tText(text: 'Following'),
                                               ],
                                             ),
@@ -318,6 +317,7 @@ class ProfileScreen extends StatelessWidget {
                                                             .spaceEvenly,
                                                     children: [
                                                       Spacer(),
+                                                      Spacer(),
                                                       CustomFutureBuilder(
                                                         stream:
                                                             FirebaseFirestore
@@ -331,8 +331,8 @@ class ProfileScreen extends StatelessWidget {
                                                                 .snapshots(),
                                                       ),
                                                       Spacer(),
-                                                      Spacer(),
-                                                      Text('0'),
+                                                      // Spacer(),
+                                                      // Text('0'),
                                                       // CustomFutureBuilder(
                                                       //   stream: FirebaseFirestore.instance
                                                       //       .collection('user')
@@ -342,26 +342,57 @@ class ProfileScreen extends StatelessWidget {
                                                       // ),
                                                       Spacer(),
                                                       Spacer(),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          Navigator.pushNamed(
-                                                              context,
-                                                              FollowingPage
-                                                                  .routeName);
-                                                        },
-                                                        child:
-                                                            CustomFutureBuilder(
-                                                          stream: FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'user')
-                                                              .doc(snap.data
-                                                                  .toString())
-                                                              .collection(
-                                                                  'following')
-                                                              .snapshots(),
-                                                        ),
-                                                      ),
+                                                      FutureBuilder(
+                                                          future: LocalStorage()
+                                                              .readdata(),
+                                                          builder:
+                                                              (context1, snap) {
+                                                            return StreamBuilder(
+                                                              stream: FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'user')
+                                                                  .doc(snap.data
+                                                                      .toString())
+                                                                  .collection(
+                                                                      'following')
+                                                                  .snapshots(),
+                                                              builder: (context,
+                                                                  AsyncSnapshot<
+                                                                          QuerySnapshot>
+                                                                      snapshot) {
+                                                                if (snapshot
+                                                                    .hasData) {
+                                                                  return InkWell(
+                                                                    onTap: () {
+                                                                      Navigator
+                                                                          .pushNamed(
+                                                                        context,
+                                                                        FollowingPage
+                                                                            .routeName,
+                                                                        arguments: FollowingPage(
+                                                                          unfollow: true,
+                                                                            email: snap.data
+                                                                                .toString(),
+                                                                           ),
+                                                                      );
+                                                                    },
+                                                                    child: tText(
+                                                                        text: snapshot
+                                                                            .data!
+                                                                            .docs
+                                                                            .length
+                                                                            .toString()),
+                                                                  );
+                                                                } else {
+                                                                  return Text(
+                                                                      'no data found');
+                                                                }
+                                                              },
+                                                            );
+                                                          }),
+
+                                                      Spacer(),
                                                       Spacer(),
                                                     ],
                                                   );

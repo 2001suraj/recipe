@@ -8,7 +8,6 @@ class UserModel {
   final String? about;
   final String? lastMessage;
   final DateTime? messageSent;
-  final List? followers;
   final List? following;
   UserModel({
     this.name,
@@ -17,7 +16,6 @@ class UserModel {
     this.about,
     this.lastMessage,
     this.messageSent,
-    this.followers,
     this.following,
   });
 
@@ -29,7 +27,6 @@ class UserModel {
       'about': about,
       'lastMessage': lastMessage,
       'messageSent': messageSent?.millisecondsSinceEpoch,
-      'followers': followers,
       'following': following,
     };
   }
@@ -44,7 +41,6 @@ class UserModel {
       messageSent: map['messageSent'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['messageSent'] as int)
           : null,
-      followers: List.from((map['followers'] as List)),
       following: List.from((map['following'] as List)),
     );
   }
