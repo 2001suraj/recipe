@@ -318,17 +318,31 @@ class ProfileScreen extends StatelessWidget {
                                                     children: [
                                                       Spacer(),
                                                       Spacer(),
-                                                      CustomFutureBuilder(
-                                                        stream:
-                                                            FirebaseFirestore
-                                                                .instance
-                                                                .collection(
-                                                                    'user')
-                                                                .doc(snap.data
-                                                                    .toString())
-                                                                .collection(
-                                                                    'recipes')
-                                                                .snapshots(),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.pushNamed(
+                                                              context,
+                                                              UploadedRecipePage
+                                                                  .routeName,
+                                                              arguments:
+                                                                  UploadedRecipePage(
+                                                                      email: snap
+                                                                          .data
+                                                                          .toString()));
+                                                        },
+                                                        child:
+                                                            CustomFutureBuilder(
+                                                          stream: FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'all_recipe')
+                                                              .where(
+                                                                  'owner_email',
+                                                                  isEqualTo: snap
+                                                                      .data
+                                                                      .toString())
+                                                              .snapshots(),
+                                                        ),
                                                       ),
                                                       Spacer(),
                                                       // Spacer(),
@@ -370,11 +384,14 @@ class ProfileScreen extends StatelessWidget {
                                                                         context,
                                                                         FollowingPage
                                                                             .routeName,
-                                                                        arguments: FollowingPage(
-                                                                          unfollow: true,
-                                                                            email: snap.data
-                                                                                .toString(),
-                                                                           ),
+                                                                        arguments:
+                                                                            FollowingPage(
+                                                                          unfollow:
+                                                                              true,
+                                                                          email: snap
+                                                                              .data
+                                                                              .toString(),
+                                                                        ),
                                                                       );
                                                                     },
                                                                     child: tText(
@@ -417,15 +434,21 @@ class ProfileScreen extends StatelessWidget {
                     top: 650,
                     right: 0,
                     left: 0,
-                    child: CustomRow(
-                      text1: 'Uploaded Recipe',
-                      text2: 'View All',
-                      tap: () {
-                        Navigator.pushNamed(
-                            context, UploadedRecipePage.routeName);
-                      },
-                      color: Colors.white,
-                    ),
+                    child: FutureBuilder(
+                        future: LocalStorage().readdata(),
+                        builder: (context, snap) {
+                          return CustomRow(
+                            text1: 'Uploaded Recipe',
+                            text2: 'View All',
+                            tap: () {
+                              Navigator.pushNamed(
+                                  context, UploadedRecipePage.routeName,
+                                  arguments: UploadedRecipePage(
+                                      email: snap.data.toString()));
+                            },
+                            color: Colors.white,
+                          );
+                        }),
                   ),
                   Positioned(
                     top: 730,
@@ -444,9 +467,9 @@ class ProfileScreen extends StatelessWidget {
                           builder: (context1, snap) {
                             return StreamBuilder(
                               stream: FirebaseFirestore.instance
-                                  .collection('user')
-                                  .doc(snap.data.toString())
-                                  .collection('recipes')
+                                  .collection('all_recipe')
+                                  .where('owner_email',
+                                      isEqualTo: snap.data.toString())
                                   .snapshots(),
                               builder: (context,
                                   AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -454,7 +477,7 @@ class ProfileScreen extends StatelessWidget {
                                   return ListView.builder(
                                       scrollDirection: Axis.horizontal,
                                       shrinkWrap: true,
-                                      itemCount: snapshot.data!.docs.length,
+                                      itemCount: 6,
                                       itemBuilder: (context, index) {
                                         return InkWell(
                                           onTap: () {
@@ -488,7 +511,7 @@ class ProfileScreen extends StatelessWidget {
                                               Container(
                                                 height: 200,
                                                 width: 170,
-                                                margin: EdgeInsets.all(10),
+                                                margin: EdgeInsets.all(7),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:

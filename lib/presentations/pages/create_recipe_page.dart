@@ -4,7 +4,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:recipe_app/data/local/local_storage.dart';
@@ -14,6 +13,13 @@ import 'package:recipe_app/data/repo/recipe_repo.dart';
 
 import 'package:recipe_app/presentations/screens/main_screen.dart';
 import 'package:recipe_app/presentations/widgets/show__snackbar.dart';
+
+List<String> categoty_list = <String>[
+  'BreakFast ',
+  'Vegetarian',
+  'Non veg',
+  'others',
+];
 
 class CreateRecipePage extends StatefulWidget {
   static const String routeName = 'create recipe page';
@@ -27,12 +33,14 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
   XFile? image;
   List<Widget> ingredients = [];
   List<Widget> steps = [];
+  String dropdownValue = categoty_list.last;
 
   TextEditingController title = TextEditingController();
   TextEditingController des = TextEditingController();
   TextEditingController time = TextEditingController();
   List<TextEditingController> ingr = [];
   List<TextEditingController> step = [];
+  String cata = 'others';
   @override
   void dispose() {
     for (TextEditingController t in ingr) {
@@ -79,24 +87,23 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                                   snapshot1.data) {
                                 return InkWell(
                                   onTap: () {
-                                    showsnackBar(
-                                        context: context,
-                                        text: ' recipe photo is required',
-                                        color: Colors.red);
-                                    var pp = File(image!.path);
-
                                     var rec = Recipes(
+                                        owner_email: snapshot1.data.toString(),
+                                        category: cata,
                                         key: [
-                            for (int i = 0; i <= title.text.length; i++)
-                              title.text.substring(0, i).toLowerCase(),
-                         
-                          ],
-                                      fav: 0,
+                                          for (int i = 0;
+                                              i <= title.text.length;
+                                              i++)
+                                            title.text
+                                                .substring(0, i)
+                                                .toLowerCase(),
+                                        ],
+                                        fav: 0,
                                         owner: snapshot
                                             .data!.docs[index]['name']
                                             .toString(),
                                         photourl: '',
-                                        title: title.text,
+                                        title: title.text.toLowerCase(),
                                         description: des.text,
                                         cook_time: time.text,
                                         ingredient:
@@ -104,6 +111,14 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                                         steps:
                                             step.map((e) => e.text).toList());
 
+                                    var pp = File(image!.path);
+                                    RecipeRepo().allRecipes(
+                                      recipes: rec,
+                                    );
+                                    CloudStorages().allRecipephoto(
+                                        photo: pp,
+                                        title: title.text,
+                                        email: snapshot1.data.toString());
                                     showDialog(
                                       context: context,
                                       builder: (ctx) => AlertDialog(
@@ -112,15 +127,16 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                                         actions: <Widget>[
                                           TextButton(
                                             onPressed: () {
-                                              RecipeRepo().popularRecipes(
+                                              RecipeRepo().todayRecipes(
                                                 recipes: rec,
                                               );
-                                              CloudStorages()
-                                                  .popularrecipephoto(
-                                                      photo: pp,
-                                                      title: title.text,
-                                                      email: snapshot1.data
-                                                          .toString());
+
+                                              CloudStorages().todayrecipephoto(
+                                                  photo: pp,
+                                                  title: title.text,
+                                                  email: snapshot1.data
+                                                      .toString());
+
                                               showsnackBar(
                                                   context: context,
                                                   text:
@@ -162,6 +178,7 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                                                       title: title.text,
                                                       email: snapshot1.data
                                                           .toString());
+
                                               showsnackBar(
                                                   context: context,
                                                   text:
@@ -203,6 +220,7 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                                                   title: title.text,
                                                   email: snapshot1.data
                                                       .toString());
+
                                               showsnackBar(
                                                   context: context,
                                                   text:
@@ -359,6 +377,7 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                   ),
                 ),
               ),
+
               //description
               Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -429,6 +448,59 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                   ],
                 ),
               ),
+
+              Container(
+                height: 50,
+                width: 200,
+                color: Colors.white,
+                child: Center(
+                  child: Text(
+                    'category',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              DropdownButton<String>(
+                value: dropdownValue,
+                icon: const Icon(
+                  Icons.arrow_downward,
+                  color: Colors.white,
+                ),
+                elevation: 16,
+                style: const TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+                underline: Container(
+                  height: 4,
+                  color: Colors.blue,
+                ),
+                onChanged: (String? value) {
+                  // This is called when the user selects an item.
+                  setState(() {
+                    dropdownValue = value!;
+                    cata = value;
+                    print(cata);
+                  });
+                },
+                items:
+                    categoty_list.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  );
+                }).toList(),
+              ),
+
               Divider(color: Colors.grey, thickness: 7),
 
               //ingredients
@@ -451,6 +523,33 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
       ),
     );
   }
+}
+
+void _showDialog(BuildContext context,
+    {required String title, required String email}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Do you want to delete your receipe ? "),
+        actions: [
+          MaterialButton(
+            child: Text("No"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          MaterialButton(
+            child: Text("yes"),
+            onPressed: () {
+              RecipeRepo().deleteRecipes(title: title, email: email);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class StepContainer extends StatefulWidget {

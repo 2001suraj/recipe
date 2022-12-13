@@ -13,7 +13,6 @@ class IndividualPage extends StatefulWidget {
       required this.time,
       required this.image,
       required this.ingr,
-
       required this.step,
       required this.title})
       : super(key: key);
@@ -81,7 +80,6 @@ class _IndividualPageState extends State<IndividualPage> {
                     // by author and likes
                     AuthorAndFavContainer(
                       name: widget.name,
-                     
                       title: widget.title,
                     ),
 
@@ -272,10 +270,7 @@ class _IndividualPageState extends State<IndividualPage> {
 
 class AuthorAndFavContainer extends StatefulWidget {
   const AuthorAndFavContainer(
-      {Key? key,
-      required this.name,
-
-      required this.title})
+      {Key? key, required this.name, required this.title})
       : super(key: key);
 
   final String name;

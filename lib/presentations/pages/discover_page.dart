@@ -2,9 +2,11 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/presentations/pages/create_recipe_page.dart';
 import 'package:recipe_app/presentations/pages/popular_recipes_page.dart';
 import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
 import 'package:recipe_app/presentations/pages/today_recipe_page.dart';
+import 'package:recipe_app/presentations/screens/categoty_screen.dart';
 import 'package:recipe_app/presentations/widgets/custom_row.dart';
 import 'package:recipe_app/presentations/widgets/dot_indicator.dart';
 
@@ -25,10 +27,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
     'assets/images/dinner.png',
   ];
   List<String> menu_name = [
-    'Breakfast Recipes',
-    'lunch Recipes',
-    'Main course Recipes',
-    'Dinner Recipes',
+    'BreakFast ',
+    'Vegetarian',
+    'Non veg',
+    'others',
   ];
 
   @override
@@ -66,7 +68,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           shrinkWrap: true,
                           primary: false,
                           scrollDirection: Axis.horizontal,
-                          itemCount: snapshot.data!.docs.length,
+                          itemCount: 6,
                           itemBuilder: (context, index) {
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -208,42 +210,50 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   shrinkWrap: true,
                   primary: false,
                   scrollDirection: Axis.horizontal,
-                  itemCount: 4,
+                  itemCount: categoty_list.length,
                   itemBuilder: (context, index) {
                     return Container(
-                      child: Container(
-                        height: 150,
-                        width: 150,
-                        margin: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.black54,
-                        ),
-                        child: Center(
-                            child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 70,
-                              width: 90,
-                              decoration: BoxDecoration(
-                                // borderRadius: BorderRadius.circular(20),
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                      menu_image[index],
-                                    ),
-                                    fit: BoxFit.cover),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushReplacementNamed(
+                              context, CategotyScreen.routeName,
+                              arguments:
+                                  CategotyScreen(title: categoty_list[index]));
+                        },
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          margin: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Colors.black54,
+                          ),
+                          child: Center(
+                              child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 70,
+                                width: 90,
+                                decoration: BoxDecoration(
+                                  // borderRadius: BorderRadius.circular(20),
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                        menu_image[index],
+                                      ),
+                                      fit: BoxFit.contain),
+                                ),
                               ),
-                            ),
-                            Text(
-                              menu_name[index],
-                              maxLines: 2,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14),
-                            ),
-                          ],
-                        )),
+                              Text(
+                                menu_name[index],
+                                maxLines: 2,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                            ],
+                          )),
+                        ),
                       ),
                     );
                   },
@@ -259,10 +269,159 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 },
               ),
               Container(
+                height: MediaQuery.of(context).size.height * 0.35,
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('popular_recipe')
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.35,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          primary: false,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 6,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        IndividualPage.routeName,
+                                        arguments: IndividualPage(
+                                          name: snapshot.data!.docs[index]
+                                              ['owner'],
+                                          // name: 'ram',
+
+                                          des: snapshot.data!.docs[index]
+                                              ['description'],
+                                          time: snapshot.data!.docs[index]
+                                              ['cook_time'],
+                                          image: snapshot.data!.docs[index]
+                                              ['photourl'],
+                                          ingr: snapshot.data!.docs[index]
+                                              ['ingredient'],
+                                          step: snapshot.data!.docs[index]
+                                              ['steps'],
+                                          title: snapshot.data!.docs[index]
+                                              ['title'],
+                                        ),
+                                      );
+                                    },
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            image: DecorationImage(
+                                                image: NetworkImage(
+                                                  snapshot.data!.docs[index]
+                                                      ['photourl'],
+                                                ),
+                                                fit: BoxFit.cover),
+                                          ),
+                                          height: 200,
+                                          width: 180,
+                                        ),
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 9),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(20),
+                                                    bottomRight:
+                                                        Radius.circular(20)),
+                                                color: Colors.white
+                                                    .withOpacity(0.6)),
+                                            height: 40,
+                                            width: 180,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  width: 150,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Icon(
+                                                          Icons.timer_outlined),
+                                                      Text(
+                                                        snapshot.data!
+                                                                .docs[index]
+                                                            ['cook_time'],
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 18.0, top: 10),
+                                  child: SizedBox(
+                                    width: 150,
+                                    child: Text(
+                                      snapshot.data!.docs[index]['title'],
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    return Text('no data found');
+                  },
+                ),
+              ),
+
+//all recipe
+              CustomRow(
+                text1: 'More Recipes',
+                text2: '',
+                tap: () {},
+              ),
+
+              Container(
                 height: MediaQuery.of(context).size.height * 0.5,
                 child: StreamBuilder(
                     stream: FirebaseFirestore.instance
-                        .collection('popular_recipe')
+                        .collection('all_recipe')
                         .snapshots(),
                     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                       return Container(
@@ -392,7 +551,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       );
                     }),
               ),
-
               SizedBox(
                 height: 30,
               )

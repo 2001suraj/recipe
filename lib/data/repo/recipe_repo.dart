@@ -12,10 +12,13 @@ class RecipeRepo {
         .collection('recipes')
         .doc(recipes.title);
     var items = await item.set(Recipes(
-      key: recipes.key,
+            category: recipes.category,
+            key: recipes.key,
             owner: recipes.owner,
             fav: recipes.fav,
+       
             photourl: recipes.photourl,
+            owner_email: recipes.owner_email,
             title: recipes.title,
             description: recipes.description,
             cook_time: recipes.cook_time,
@@ -36,7 +39,10 @@ class RecipeRepo {
         .doc(recipes.title);
     await item.set(
       Recipes(
+              category: recipes.category,
               fav: recipes.fav,
+       
+
               key: recipes.key,
               owner: recipes.owner,
               photourl: recipes.photourl,
@@ -44,6 +50,7 @@ class RecipeRepo {
               description: recipes.description,
               cook_time: recipes.cook_time,
               ingredient: recipes.ingredient,
+              owner_email: recipes.owner_email,
               steps: recipes.steps)
           .toMap(),
     );
@@ -60,11 +67,43 @@ class RecipeRepo {
         .doc(recipes.title);
     await item.set(
       Recipes(
-        key: recipes.key,
+              category: recipes.category,
+              key: recipes.key,
+       
+
               owner: recipes.owner,
               photourl: recipes.photourl,
               title: recipes.title,
+              owner_email: recipes.owner_email,
               fav: recipes.fav,
+              description: recipes.description,
+              cook_time: recipes.cook_time,
+              ingredient: recipes.ingredient,
+              steps: recipes.steps)
+          .toMap(),
+    );
+  }
+
+  //all
+  Future allRecipes({
+    required Recipes recipes,
+  }) async {
+    var item = storage
+        .collection('all_recipe')
+        // .doc(email)
+        // .collection('recipes')
+        .doc(recipes.title);
+
+    await item.set(
+      Recipes(
+       
+              owner_email: recipes.owner_email,
+              category: recipes.category,
+              fav: recipes.fav,
+              key: recipes.key,
+              owner: recipes.owner,
+              photourl: recipes.photourl,
+              title: recipes.title,
               description: recipes.description,
               cook_time: recipes.cook_time,
               ingredient: recipes.ingredient,

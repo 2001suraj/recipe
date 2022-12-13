@@ -31,11 +31,7 @@ class CloudStorages {
     required List<String> key,
   }) async {
     var user = await storage.collection('user').doc(email);
-    await user.update({
-      'name': name,
-      'about': about,
-      'key':key
-    });
+    await user.update({'name': name, 'about': about, 'key': key});
   }
 
   Future profilesetup({
@@ -102,6 +98,7 @@ class CloudStorages {
       final urls = await snap.ref.getDownloadURL();
       var user = await storage
           .collection('today_recipe')
+
           // .doc(email)
           // .collection('recipes')
           .doc(title);
@@ -129,6 +126,31 @@ class CloudStorages {
       final urls = await snap.ref.getDownloadURL();
       var user = await storage
           .collection('popular_recipe')
+          // .doc(email)
+          // .collection('recipes')
+          .doc(title);
+      await user.update({'photourl': urls});
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  //all
+  Future allRecipephoto({
+    required File photo,
+    required String title,
+    required String email,
+  }) async {
+    try {
+      UploadTask? uploadTask;
+      var ref =
+          FirebaseStorage.instance.ref().child('all_recipe_photo').child(title);
+      ref.putFile(photo);
+      uploadTask = ref.putFile(photo);
+      final snap = await uploadTask.whenComplete(() {});
+      final urls = await snap.ref.getDownloadURL();
+      var user = await storage
+          .collection('all_recipe')
           // .doc(email)
           // .collection('recipes')
           .doc(title);

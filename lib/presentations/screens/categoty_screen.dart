@@ -1,20 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
+import 'package:recipe_app/presentations/screens/main_screen.dart';
 
-class AllRecipePage extends StatelessWidget {
-  static const String routeName = 'All recipe page';
-
-  AllRecipePage({Key? key, required this.stream}) : super(key: key);
-  Stream<QuerySnapshot<Map<String, dynamic>>>? stream;
+class CategotyScreen extends StatelessWidget {
+  static const String routeName = 'categoty screen';
+  CategotyScreen({Key? key, required this.title}) : super(key: key);
+  String title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, MainScreen.routeName);
+            },
+            icon: Icon(Icons.arrow_back_ios_new)),
+        title: Text(title),
+        centerTitle: true,
+      ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         child: StreamBuilder(
-            stream: stream,
+            stream: FirebaseFirestore.instance
+                .collection('all_recipe')
+                .where('category', isEqualTo: title)
+                .snapshots(),
+            // FirebaseFirestore.instance.collection('all_recipe').snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               return Container(
                 height: MediaQuery.of(context).size.height * 0.5,
@@ -66,7 +79,6 @@ class AllRecipePage extends StatelessWidget {
                                   left: 0,
                                   right: 0,
                                   child: Container(
-                                 
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.only(
                                             bottomLeft: Radius.circular(20),

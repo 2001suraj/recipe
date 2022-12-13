@@ -54,7 +54,7 @@ class _SearchUserScreenState extends State<SearchRecipeScreen> {
         body: (nam != '' && nam != null)
             ? AllRecipePage(
                 stream: FirebaseFirestore.instance
-                    .collection('popular_recipe')
+                    .collection('all_recipe')
                     .where('key', arrayContains: nam)
                     .snapshots())
             : Container(

@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:recipe_app/data/repo/cloud_storage.dart';
@@ -163,44 +164,89 @@ class _EditProfilePageState extends State<EditProfilePage> {
               SizedBox(
                 height: 20,
               ),
-              MaterialButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                color: Colors.amber,
-                height: 50,
-                minWidth: MediaQuery.of(context).size.width,
-                onPressed: () {
-                  var ii = File(image!.path);
-                  CloudStorages().userinfo_update(
-                      email: widget.email,
-                      name: name.text,
-                      about: about.text,
-                      key: [
-                        for (int i = 0; i <= name.text.length; i++)
-                          name.text.substring(0, i),
-                      ]);
-                  image == null
-                      ? SizedBox()
-                      : CloudStorages().profilesetup(
-                          photo: ii, name: widget.email, email: widget.email);
+              StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('all_recipe')
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    return image == null
+                        ? MaterialButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            color: Colors.amber,
+                            height: 60,
+                            minWidth: MediaQuery.of(context).size.width,
+                            onPressed: () {
+                              // var ii = File(image!.path);
+                              CloudStorages().userinfo_update(
+                                 
+                                  email: widget.email,
+                                  name: name.text,
+                                  about: about.text,
+                                  key: [
+                                    for (int i = 0; i <= name.text.length; i++)
+                                      name.text.substring(0, i),
+                                  ]);
+                              //  CloudStorages().profilesetup(
+                              //         photo: ii, name: widget.email, email: widget.email);
 
-                  showsnackBar(
-                      context: context,
-                      text: 'successfully updated',
-                      color: Colors.green);
-                  Navigator.pushReplacementNamed(
-                      context, ProfileScreen.routeName);
-                },
-                child: Text(
-                  'save',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white),
-                ),
-              )
+                              showsnackBar(
+                                  context: context,
+                                  text: 'successfully updated',
+                                  color: Colors.green);
+                              Navigator.pushReplacementNamed(
+                                  context, ProfileScreen.routeName);
+                            },
+                            child: Text(
+                              'save',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            ),
+                          )
+                        : MaterialButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            color: Colors.amber,
+                            height: 50,
+                            minWidth: MediaQuery.of(context).size.width,
+                            onPressed: () {
+                              var ii = File(image!.path);
+                              CloudStorages().userinfo_update(
+                                 
+                                  email: widget.email,
+                                  name: name.text,
+                                  about: about.text,
+                                  key: [
+                                    for (int i = 0; i <= name.text.length; i++)
+                                      name.text.substring(0, i),
+                                  ]);
+                              CloudStorages().profilesetup(
+                                  photo: ii,
+                                  name: widget.email,
+                                  email: widget.email);
+
+                              showsnackBar(
+                                  context: context,
+                                  text: 'successfully updated',
+                                  color: Colors.green);
+                              Navigator.pushReplacementNamed(
+                                  context, ProfileScreen.routeName);
+                            },
+                            child: Text(
+                              'save',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            ),
+                          );
+                  })
             ],
           ),
         ),

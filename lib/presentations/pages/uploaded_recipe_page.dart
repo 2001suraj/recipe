@@ -1,16 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/data/local/local_storage.dart';
+import 'package:recipe_app/data/repo/recipe_repo.dart';
 import 'package:recipe_app/presentations/pages/recipe_individual_page.dart';
 
 class UploadedRecipePage extends StatelessWidget {
   static const String routeName = 'uploaded recipe page';
 
-  const UploadedRecipePage({Key? key}) : super(key: key);
+  UploadedRecipePage({
+    Key? key,
+    required this.email,
+  }) : super(key: key);
+  String email;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.all(5),
@@ -21,9 +29,8 @@ class UploadedRecipePage extends StatelessWidget {
               builder: (context1, snap) {
                 return StreamBuilder(
                   stream: FirebaseFirestore.instance
-                      .collection('user')
-                      .doc(snap.data.toString())
-                      .collection('recipes')
+                      .collection('all_recipe')
+                      .where('owner_email', isEqualTo: email)
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasData) {
@@ -65,8 +72,8 @@ class UploadedRecipePage extends StatelessWidget {
                                     );
                                   },
                                   child: Container(
-                                    height: 150,
-                                    width: 170,
+                                    height: 125,
+                                    width: 160,
                                     margin: EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -85,7 +92,7 @@ class UploadedRecipePage extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       SizedBox(
-                                        width: 130,
+                                        width: 120,
                                         child: Text(
                                           snapshot.data!.docs[index]['title'],
                                           maxLines: 1,
@@ -95,6 +102,36 @@ class UploadedRecipePage extends StatelessWidget {
                                               color: Colors.black,
                                               fontSize: 20),
                                         ),
+                                      ),
+                                      PopupMenuButton<int>(
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            value: 1,
+                                            child: Row(
+                                              children: const [
+                                                Icon(Icons.delete),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text("Delete your recipe")
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                        offset: Offset(0, 100),
+                                        color: Colors.white,
+                                        elevation: 2,
+                                        // on selected we show the dialog box
+                                        onSelected: (value) {
+                                          // if value 1 show dialog
+                                          if (value == 1) {
+                                            _showDialog(context,
+                                                title: snapshot
+                                                    .data!.docs[index]['title'],
+                                                email: snap.data.toString());
+                                            // if value 2 show dialog
+                                          }
+                                        },
                                       ),
                                     ],
                                   ),
@@ -232,4 +269,31 @@ class UploadedRecipePage extends StatelessWidget {
       // ));
     );
   }
+}
+
+void _showDialog(BuildContext context,
+    {required String title, required String email}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Do you want to delete your receipe ? "),
+        actions: [
+          MaterialButton(
+            child: Text("No"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          MaterialButton(
+            child: Text("yes"),
+            onPressed: () {
+              RecipeRepo().deleteRecipes(title: title, email: email);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

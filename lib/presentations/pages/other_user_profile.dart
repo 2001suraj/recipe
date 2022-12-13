@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/data/local/local_storage.dart';
 import 'package:recipe_app/presentations/pages/following_page.dart';
+import 'package:recipe_app/presentations/pages/uploaded_recipe_page.dart';
 import 'package:recipe_app/presentations/screens/profile_screen.dart';
 import 'package:recipe_app/presentations/widgets/custom_future_builder.dart';
 
@@ -159,12 +160,20 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                               Spacer(),
                               Spacer(),
 //recipe
-                              CustomFutureBuilder(
-                                stream: FirebaseFirestore.instance
-                                    .collection('user')
-                                    .doc(widget.email)
-                                    .collection('recipes')
-                                    .snapshots(),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, UploadedRecipePage.routeName,
+                                      arguments: UploadedRecipePage(
+                                          email: widget.email));
+                                },
+                                child: CustomFutureBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('all_recipe')
+                                      .where('owner_email',
+                                          isEqualTo: widget.email)
+                                      .snapshots(),
+                                ),
                               ),
                               Spacer(),
                               Spacer(),

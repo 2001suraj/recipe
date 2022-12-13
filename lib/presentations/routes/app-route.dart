@@ -12,6 +12,7 @@ import 'package:recipe_app/presentations/pages/today_recipe_page.dart';
 import 'package:recipe_app/presentations/pages/uploaded_recipe_page.dart';
 import 'package:recipe_app/presentations/screens/add_screen.dart';
 import 'package:recipe_app/presentations/screens/auth_screen.dart';
+import 'package:recipe_app/presentations/screens/categoty_screen.dart';
 import 'package:recipe_app/presentations/screens/forget_password.dart';
 import 'package:recipe_app/presentations/screens/home_screen.dart';
 import 'package:recipe_app/presentations/screens/login_screen.dart';
@@ -47,7 +48,13 @@ class AppRoute {
       case TodayRecipePage.routeName:
         return MaterialPageRoute(builder: (context) => TodayRecipePage());
       case UploadedRecipePage.routeName:
-        return MaterialPageRoute(builder: (context) => UploadedRecipePage());
+        return MaterialPageRoute(builder: (context) {
+          UploadedRecipePage? uploadedRecipePage =
+              routeSettings.arguments as UploadedRecipePage;
+          return UploadedRecipePage(
+            email: uploadedRecipePage.email,
+          );
+        });
       case SearchUserScreen.routeName:
         return MaterialPageRoute(builder: (context) => SearchUserScreen());
       case FollowingPage.routeName:
@@ -78,6 +85,14 @@ class AppRoute {
         return MaterialPageRoute(builder: (context) => ProfileScreen());
       case CreateRecipePage.routeName:
         return MaterialPageRoute(builder: (context) => CreateRecipePage());
+      case CategotyScreen.routeName:
+        return MaterialPageRoute(builder: (context) {
+          CategotyScreen? categotyScreen =
+              routeSettings.arguments as CategotyScreen;
+          return CategotyScreen(
+            title: categotyScreen.title,
+          );
+        });
       case DiscoverPage.routeName:
         return MaterialPageRoute(builder: (context) => DiscoverPage());
       case IndividualPage.routeName:
