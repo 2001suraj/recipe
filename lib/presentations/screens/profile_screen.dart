@@ -326,6 +326,8 @@ class ProfileScreen extends StatelessWidget {
                                                                   .routeName,
                                                               arguments:
                                                                   UploadedRecipePage(
+                                                                      owner:
+                                                                          true,
                                                                       email: snap
                                                                           .data
                                                                           .toString()));
@@ -444,6 +446,7 @@ class ProfileScreen extends StatelessWidget {
                               Navigator.pushNamed(
                                   context, UploadedRecipePage.routeName,
                                   arguments: UploadedRecipePage(
+                                      owner: true,
                                       email: snap.data.toString()));
                             },
                             color: Colors.white,
@@ -459,8 +462,7 @@ class ProfileScreen extends StatelessWidget {
                       height: MediaQuery.of(context).size.height * 0.35,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          // borderRadius: BorderRadius.circular(20),
-                          // color: Colors.black38,
+                    
                           ),
                       child: FutureBuilder(
                           future: LocalStorage().readdata(),

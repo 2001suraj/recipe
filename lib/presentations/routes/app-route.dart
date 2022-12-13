@@ -53,6 +53,7 @@ class AppRoute {
               routeSettings.arguments as UploadedRecipePage;
           return UploadedRecipePage(
             email: uploadedRecipePage.email,
+            owner:  uploadedRecipePage.owner,
           );
         });
       case SearchUserScreen.routeName:

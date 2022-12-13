@@ -10,8 +10,10 @@ class UploadedRecipePage extends StatelessWidget {
   UploadedRecipePage({
     Key? key,
     required this.email,
+    required this.owner,
   }) : super(key: key);
   String email;
+  bool owner;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +74,7 @@ class UploadedRecipePage extends StatelessWidget {
                                     );
                                   },
                                   child: Container(
-                                    height: 125,
+                                    height: 110,
                                     width: 160,
                                     margin: EdgeInsets.all(8),
                                     decoration: BoxDecoration(
@@ -92,7 +94,7 @@ class UploadedRecipePage extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       SizedBox(
-                                        width: 120,
+                                        width: 110,
                                         child: Text(
                                           snapshot.data!.docs[index]['title'],
                                           maxLines: 1,
@@ -103,36 +105,39 @@ class UploadedRecipePage extends StatelessWidget {
                                               fontSize: 20),
                                         ),
                                       ),
-                                      PopupMenuButton<int>(
-                                        itemBuilder: (context) => [
-                                          PopupMenuItem(
-                                            value: 1,
-                                            child: Row(
-                                              children: const [
-                                                Icon(Icons.delete),
-                                                SizedBox(
-                                                  width: 10,
+                                  owner
+                                          ? PopupMenuButton<int>(
+                                              itemBuilder: (context) => [
+                                                PopupMenuItem(
+                                                  value: 1,
+                                                  child: Row(
+                                                    children: const [
+                                                      Icon(Icons.delete),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Text("Delete your recipe")
+                                                    ],
+                                                  ),
                                                 ),
-                                                Text("Delete your recipe")
                                               ],
-                                            ),
-                                          ),
-                                        ],
-                                        offset: Offset(0, 100),
-                                        color: Colors.white,
-                                        elevation: 2,
-                                        // on selected we show the dialog box
-                                        onSelected: (value) {
-                                          // if value 1 show dialog
-                                          if (value == 1) {
-                                            _showDialog(context,
-                                                title: snapshot
-                                                    .data!.docs[index]['title'],
-                                                email: snap.data.toString());
-                                            // if value 2 show dialog
-                                          }
-                                        },
-                                      ),
+                                              offset: Offset(0, 100),
+                                              color: Colors.white,
+                                              elevation: 2,
+                                              // on selected we show the dialog box
+                                              onSelected: (value) {
+                                                // if value 1 show dialog
+                                                if (value == 1) {
+                                                  _showDialog(context,
+                                                      title: snapshot.data!
+                                                          .docs[index]['title'],
+                                                      email:
+                                                          snap.data.toString());
+                                                  // if value 2 show dialog
+                                                }
+                                              },
+                                            )
+                                          : SizedBox(),
                                     ],
                                   ),
                                 )

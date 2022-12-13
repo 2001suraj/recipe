@@ -165,6 +165,7 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                   Navigator.pushNamed(
                                       context, UploadedRecipePage.routeName,
                                       arguments: UploadedRecipePage(
+                                        owner: false,
                                           email: widget.email));
                                 },
                                 child: CustomFutureBuilder(
