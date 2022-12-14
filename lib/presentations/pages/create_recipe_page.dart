@@ -12,6 +12,8 @@ import 'package:recipe_app/data/repo/cloud_storage.dart';
 import 'package:recipe_app/data/repo/recipe_repo.dart';
 
 import 'package:recipe_app/presentations/screens/main_screen.dart';
+import 'package:recipe_app/presentations/widgets/ingredients_container.dart';
+import 'package:recipe_app/presentations/widgets/setp_container.dart';
 import 'package:recipe_app/presentations/widgets/show__snackbar.dart';
 
 List<String> categoty_list = <String>[
@@ -504,6 +506,13 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
               Divider(color: Colors.grey, thickness: 7),
 
               //ingredients
+              Text(
+                'Ingredients',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 25),
+              ),
               IngredientsContainer(
                 ingre: ingr,
               ),
@@ -513,6 +522,13 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                 thickness: 8,
               ),
               // steps
+              Text(
+                'Steps',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 25),
+              ),
               StepContainer(step: step),
               SizedBox(
                 height: 40,
@@ -550,229 +566,4 @@ void _showDialog(BuildContext context,
       );
     },
   );
-}
-
-class StepContainer extends StatefulWidget {
-  StepContainer({Key? key, required this.step}) : super(key: key);
-  final List step;
-
-  @override
-  State<StepContainer> createState() => _StepContainerState();
-}
-
-class _StepContainerState extends State<StepContainer> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Text(
-            'Steps',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
-          ),
-          Container(
-            height: 290,
-            child: ListView.builder(
-              itemCount: widget.step.length,
-              itemBuilder: (context, index) {
-                if (index >= 20) {
-                  return const SizedBox();
-                } else {
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            height: 40,
-                            width: 40,
-                            margin: EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.white,
-                            ),
-                            child: Center(
-                                child: Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  fontSize: 20),
-                            )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width / 1.4,
-                              height: 90,
-                              child: TextField(
-                                controller: widget.step[index],
-                                maxLines: 2,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                                decoration: InputDecoration(
-                                  hintText:
-                                      'Mix the flour and water until they thicken',
-                                  hintStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.white54),
-                                  fillColor: Colors.grey,
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                }
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: MaterialButton(
-              height: 50,
-              minWidth: 200,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              color: Colors.white,
-              onPressed: () {
-                setState(() {
-                  widget.step.add(TextEditingController());
-                });
-              },
-              child: Text(
-                '+ Steps',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 20),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class IngredientsContainer extends StatefulWidget {
-  IngredientsContainer({Key? key, required this.ingre}) : super(key: key);
-  final List ingre;
-
-  @override
-  State<IngredientsContainer> createState() => _IngredientsContainerState();
-}
-
-class _IngredientsContainerState extends State<IngredientsContainer> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Text(
-            'Ingredients',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
-          ),
-          Container(
-            height: 290,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: widget.ingre.length,
-              itemBuilder: (context, int index) {
-                if (index >= 20) {
-                  return const SizedBox();
-                } else {
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            height: 40,
-                            width: 40,
-                            margin: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.blue,
-                            ),
-                            child: Center(
-                                child: Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width / 1.4,
-                              height: 60,
-                              child: TextField(
-                                controller: widget.ingre[index],
-                                maxLines: 1,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                                decoration: InputDecoration(
-                                  hintText: '250 g flour ',
-                                  hintStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.white54),
-                                  fillColor: Colors.grey,
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                }
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: MaterialButton(
-              height: 50,
-              minWidth: 200,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              color: Colors.blue,
-              onPressed: () {
-                setState(() {
-                  widget.ingre.add(TextEditingController());
-                });
-              },
-              child: Text(
-                '+ Ingredients',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 20),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

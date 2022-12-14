@@ -5,7 +5,7 @@ class SearchRepo {
     return FirebaseFirestore.instance
         .collection('fav')
         .where('searchkey',
-            isEqualTo: searchfield.substring(0, 1).toUpperCase())
+            isEqualTo: searchfield.substring(0, 1).toLowerCase())
         .get();
   }
 }
