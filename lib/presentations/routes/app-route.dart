@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/presentations/pages/create_recipe_page.dart';
 import 'package:recipe_app/presentations/pages/discover_page.dart';
 import 'package:recipe_app/presentations/pages/edit_profile_page.dart';
-import 'package:recipe_app/presentations/pages/edit_recipe_page.dart';
 import 'package:recipe_app/presentations/pages/following_page.dart';
 import 'package:recipe_app/presentations/pages/other_user_profile.dart';
 import 'package:recipe_app/presentations/pages/popular_recipes_page.dart';
@@ -41,19 +40,7 @@ class AppRoute {
         return MaterialPageRoute(builder: (context) => ForgetpasswordScreen());
       case HomeScreen.routeName:
         return MaterialPageRoute(builder: (context) => HomeScreen());
-      case EditRecipePage.routeName:
-        return MaterialPageRoute(builder: (context) {
-          EditRecipePage? editRecipePage =
-              routeSettings.arguments as EditRecipePage;
-          return EditRecipePage(
-            des: editRecipePage.des,
-            image: editRecipePage.image,
-            ingr: editRecipePage.ingr,
-            step: editRecipePage.step,
-            time: editRecipePage.time,
-            title:editRecipePage. title,
-          );
-        });
+ 
 
       case AddScreen.routeName:
         return MaterialPageRoute(builder: (context) => AddScreen());
@@ -117,7 +104,9 @@ class AppRoute {
           return IndividualPage(
               des: individual!.des,
               name: individual.name,
+              cata: individual.cata,
               time: individual.time,
+              owner: individual.owner,
               image: individual.image,
               ingr: individual.ingr,
               step: individual.step,

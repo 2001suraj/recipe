@@ -71,3 +71,28 @@ class Recipes {
   factory Recipes.fromJson(String source) =>
       Recipes.fromMap(json.decode(source) as Map<String, dynamic>);
 }
+
+class Updateingre {
+  List<String> ingredient;
+  Updateingre({
+    required this.ingredient,
+  });
+
+
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'ingredient': ingredient,
+    };
+  }
+
+  factory Updateingre.fromMap(Map<String, dynamic> map) {
+    return Updateingre(
+      ingredient: List<String>.from((map['ingredient'] as List<String>)),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Updateingre.fromJson(String source) => Updateingre.fromMap(json.decode(source) as Map<String, dynamic>);
+}

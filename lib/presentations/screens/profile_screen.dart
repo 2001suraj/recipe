@@ -461,9 +461,7 @@ class ProfileScreen extends StatelessWidget {
                       margin: EdgeInsets.all(5),
                       height: MediaQuery.of(context).size.height * 0.35,
                       width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                    
-                          ),
+                      decoration: BoxDecoration(),
                       child: FutureBuilder(
                           future: LocalStorage().readdata(),
                           builder: (context1, snap) {
@@ -479,7 +477,7 @@ class ProfileScreen extends StatelessWidget {
                                   return ListView.builder(
                                       scrollDirection: Axis.horizontal,
                                       shrinkWrap: true,
-                                      itemCount: 6,
+                                      itemCount: snapshot.data!.docs.length,
                                       itemBuilder: (context, index) {
                                         return InkWell(
                                           onTap: () {
@@ -487,10 +485,13 @@ class ProfileScreen extends StatelessWidget {
                                               context,
                                               IndividualPage.routeName,
                                               arguments: IndividualPage(
+                                                owner: true,
                                                 des: snapshot.data!.docs[index]
                                                     ['description'],
                                                 name: snapshot.data!.docs[index]
                                                     ['owner'],
+                                                cata: snapshot.data!.docs[index]
+                                                    ['category'],
                                                 time: snapshot.data!.docs[index]
                                                     ['cook_time'],
                                                 image: snapshot.data!

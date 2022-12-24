@@ -16,7 +16,6 @@ class RecipeRepo {
             key: recipes.key,
             owner: recipes.owner,
             fav: recipes.fav,
-       
             photourl: recipes.photourl,
             owner_email: recipes.owner_email,
             title: recipes.title,
@@ -41,8 +40,6 @@ class RecipeRepo {
       Recipes(
               category: recipes.category,
               fav: recipes.fav,
-       
-
               key: recipes.key,
               owner: recipes.owner,
               photourl: recipes.photourl,
@@ -69,8 +66,6 @@ class RecipeRepo {
       Recipes(
               category: recipes.category,
               key: recipes.key,
-       
-
               owner: recipes.owner,
               photourl: recipes.photourl,
               title: recipes.title,
@@ -96,7 +91,6 @@ class RecipeRepo {
 
     await item.set(
       Recipes(
-       
               owner_email: recipes.owner_email,
               category: recipes.category,
               fav: recipes.fav,
@@ -112,9 +106,46 @@ class RecipeRepo {
     );
   }
 
+  Future updateRecipes({
+    required Recipes recipes,
+  }) async {
+    var item = storage.collection('all_recipe').doc(recipes.title);
+
+    await item.update(
+      Recipes(
+              owner_email: recipes.owner_email,
+              category: recipes.category,
+              fav: recipes.fav,
+              key: recipes.key,
+              owner: recipes.owner,
+              photourl: recipes.photourl,
+              title: recipes.title,
+              description: recipes.description,
+              cook_time: recipes.cook_time,
+              ingredient: recipes.ingredient,
+              steps: recipes.steps)
+          .toMap(),
+    );
+  }
+
+  Future updateingredient({
+    required String title,
+    required List<String> ing,
+  }) async {
+    var item = storage.collection('all_recipe').doc(title);
+
+    await item.update({
+      // 'ingredient': [{index: ing},]
+      'ingredient': ing
+    });
+  }
+
   Future deleteRecipes({required String title, required String email}) async {
     var item =
-        storage.collection('user').doc(email).collection('recipes').doc(title);
+        // storage
+        //     .collection('all_recipe')
+        //     .where('owner_email', isEqualTo: email).snapshots();
+        storage.collection('all_recipe').doc(title);
     await item.delete();
   }
 }

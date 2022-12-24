@@ -56,8 +56,12 @@ class UploadedRecipePage extends StatelessWidget {
                                       context,
                                       IndividualPage.routeName,
                                       arguments: IndividualPage(
+                                        owner: true,
+
                                         des: snapshot.data!.docs[index]
                                             ['description'],
+                                                    cata:snapshot.data!.docs[index]['category'] ,
+
                                         name: snapshot.data!.docs[index]
                                             ['owner'],
                                         time: snapshot.data!.docs[index]

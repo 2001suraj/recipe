@@ -47,7 +47,7 @@ class _IngredientsContainerState extends State<IngredientsContainer> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: SizedBox(
-                            width: MediaQuery.of(context).size.width / 1.4,
+                            width: MediaQuery.of(context).size.width / 1.5,
                             height: 60,
                             child: TextField(
                               controller: widget.ingre[index],
@@ -71,6 +71,34 @@ class _IngredientsContainerState extends State<IngredientsContainer> {
                               ),
                             ),
                           ),
+                        ),
+                        PopupMenuButton<int>(
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: Colors.white,
+                          ),
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 1,
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.delete),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("Delete this Row")
+                                ],
+                              ),
+                            ),
+                          ],
+                          offset: Offset(0, 40),
+                          color: Colors.white,
+                          elevation: 2,
+                          onSelected: (value) {
+                            if (value == 1) {
+                              _showDialog(context, index: index);
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -103,6 +131,35 @@ class _IngredientsContainerState extends State<IngredientsContainer> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showDialog(BuildContext context, {required index}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Do you want to delete this row ? "),
+          actions: [
+            MaterialButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            MaterialButton(
+              child: Text("yes"),
+              onPressed: () {
+                setState(() {
+                  widget.ingre.removeAt(index);
+                });
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

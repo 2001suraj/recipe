@@ -37,6 +37,9 @@ class AllRecipePage extends StatelessWidget {
                                 context,
                                 IndividualPage.routeName,
                                 arguments: IndividualPage(
+                                  owner: false,
+                                                    cata:snapshot.data!.docs[index]['category'] ,
+
                                   name: snapshot.data!.docs[index]['owner'],
                                   des: snapshot.data!.docs[index]
                                       ['description'],

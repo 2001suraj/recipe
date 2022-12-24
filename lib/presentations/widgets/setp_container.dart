@@ -47,7 +47,7 @@ class _StepContainerState extends State<StepContainer> {
                         Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: SizedBox(
-                            width: MediaQuery.of(context).size.width / 1.4,
+                            width: MediaQuery.of(context).size.width / 1.5,
                             height: 85,
                             child: TextField(
                               controller: widget.step[index],
@@ -72,6 +72,34 @@ class _StepContainerState extends State<StepContainer> {
                               ),
                             ),
                           ),
+                        ),
+                        PopupMenuButton<int>(
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: Colors.white,
+                          ),
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 1,
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.delete),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("Delete this Row")
+                                ],
+                              ),
+                            ),
+                          ],
+                          offset: Offset(0, 40),
+                          color: Colors.white,
+                          elevation: 2,
+                          onSelected: (value) {
+                            if (value == 1) {
+                              _showDialog(context, index: index);
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -197,5 +225,34 @@ class _StepContainerState extends State<StepContainer> {
     //     ),
     //   ],
     // );
+  }
+
+  void _showDialog(BuildContext context, {required index}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Do you want to delete this row ? "),
+          actions: [
+            MaterialButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            MaterialButton(
+              child: Text("yes"),
+              onPressed: () {
+                setState(() {
+                  widget.step.removeAt(index);
+                });
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

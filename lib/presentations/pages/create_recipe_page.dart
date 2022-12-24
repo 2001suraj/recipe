@@ -20,6 +20,7 @@ List<String> categoty_list = <String>[
   'BreakFast ',
   'Vegetarian',
   'Non veg',
+  'Drinks and Cocktail',
   'others',
 ];
 

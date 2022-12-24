@@ -50,7 +50,10 @@ class CategotyScreen extends StatelessWidget {
                                 context,
                                 IndividualPage.routeName,
                                 arguments: IndividualPage(
+                                  owner: false,
                                   name: snapshot.data!.docs[index]['owner'],
+                                                    cata:snapshot.data!.docs[index]['category'] ,
+
                                   des: snapshot.data!.docs[index]
                                       ['description'],
                                   time: snapshot.data!.docs[index]['cook_time'],

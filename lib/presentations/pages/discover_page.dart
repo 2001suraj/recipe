@@ -24,12 +24,14 @@ class _DiscoverPageState extends State<DiscoverPage> {
     'assets/images/breakfast.png',
     'assets/images/lunch.png',
     'assets/images/main.png',
+    'assets/images/cocktail.png',
     'assets/images/dinner.png',
   ];
   List<String> menu_name = [
     'BreakFast ',
     'Vegetarian',
     'Non veg',
+    'Drinks and Cocktails',
     'others',
   ];
 
@@ -84,6 +86,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                           name: snapshot.data!.docs[index]
                                               ['owner'],
                                           // name: 'ram',
+                                        owner: false,
+
+                                                    cata:snapshot.data!.docs[index]['category'] ,
+
 
                                           des: snapshot.data!.docs[index]
                                               ['description'],
@@ -209,7 +215,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   shrinkWrap: true,
                   primary: false,
                   scrollDirection: Axis.horizontal,
-                  itemCount: categoty_list.length,
+                  itemCount: menu_name.length,
                   itemBuilder: (context, index) {
                     return Container(
                       child: InkWell(
@@ -217,7 +223,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           Navigator.pushReplacementNamed(
                               context, CategotyScreen.routeName,
                               arguments:
-                                  CategotyScreen(title: categoty_list[index]));
+                                  CategotyScreen(title: menu_name[index]));
                         },
                         child: Container(
                           height: 150,
@@ -295,9 +301,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                         context,
                                         IndividualPage.routeName,
                                         arguments: IndividualPage(
+                                        owner: false,
+
                                           name: snapshot.data!.docs[index]
                                               ['owner'],
                                           // name: 'ram',
+                                                    cata:snapshot.data!.docs[index]['category'] ,
+                                          
 
                                           des: snapshot.data!.docs[index]
                                               ['description'],
@@ -442,6 +452,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                       context,
                                       IndividualPage.routeName,
                                       arguments: IndividualPage(
+                                        owner: false,
+                                                    cata:snapshot.data!.docs[index]['category'] ,
+
                                         name: snapshot.data!.docs[index]
                                             ['owner'],
                                         des: snapshot.data!.docs[index]
