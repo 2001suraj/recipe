@@ -127,6 +127,7 @@ class AllRecipePage extends StatelessWidget {
                   },
                 ),
               );
+           
             }),
       ),
     );

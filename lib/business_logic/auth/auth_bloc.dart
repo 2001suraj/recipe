@@ -21,8 +21,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         try {
           if (isSignin) {
             emit(AuthsuccessState(user: user));
-          } else {
-            emit(AuthfailureState(message: 'some error occured'));
           }
         } catch (e) {
           emit(AuthfailureState(message: e.toString()));

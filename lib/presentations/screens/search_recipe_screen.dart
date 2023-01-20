@@ -2,9 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_app/data/local/local_storage.dart';
 import 'package:recipe_app/presentations/pages/all_recipe_page.dart';
-import 'package:recipe_app/presentations/pages/other_user_profile.dart';
 
 class SearchRecipeScreen extends StatefulWidget {
   static const String routeName = 'search recipe screen';

@@ -151,8 +151,7 @@ class CloudStorages {
       final urls = await snap.ref.getDownloadURL();
       var user = await storage
           .collection('all_recipe')
-          // .doc(email)
-          // .collection('recipes')
+         
           .doc(title);
       await user.update({'photourl': urls});
     } catch (e) {
